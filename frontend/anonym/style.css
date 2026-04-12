@@ -1,0 +1,887 @@
+:root {
+    --bg-color: #ffffff;
+    --text-main: #0b242a;
+    --footer-bg: #06262d;
+    --font-family: "Inter", system-ui, sans-serif;
+
+    --nav-w: 958px;
+    --nav-h: 50px;
+    --header-pad-top: 23px;
+
+    --toggle-w: 439px;
+    --toggle-h: 55px;
+    --toggle-top: 163px;
+    --toggle-active: #8fb2b3;
+    --toggle-inactive: #d9d9d9;
+
+    --accent-color: #94b4b4;
+    --section-bg: #dce7e7;
+    --border-color: #ccc;
+
+    /* Выпадающий список методов (как на странице генерации) */
+    --dropdown-item: #00434f;
+    --dropdown-hover-fg: #d8f9ff;
+    --dropdown-hover-bg: rgba(0, 67, 79, 0.56);
+    --method-select-w: 163px;
+    --method-select-h: 25px;
+    --method-field-bg: #d9d9d9;
+    --method-field-radius: 30px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    font-weight: 400;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--header-pad-top) 20px 0;
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(var(--nav-w), 100%);
+    height: var(--nav-h);
+    flex-wrap: nowrap;
+    gap: 12px;
+}
+
+.nav a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.nav a:hover {
+    opacity: 0.7;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    line-height: 0;
+}
+
+.nav-logo img {
+    width: 32px;
+    height: auto;
+    display: block;
+}
+
+@media (max-width: 1100px) {
+    .nav {
+        flex-wrap: wrap;
+        height: auto;
+        min-height: var(--nav-h);
+        justify-content: center;
+        row-gap: 8px;
+    }
+}
+
+@media (max-width: 850px) {
+    .nav {
+        gap: 20px;
+    }
+
+    .nav > a:not(.nav-logo) {
+        display: none;
+    }
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px 40px;
+    box-sizing: border-box;
+}
+
+.tabs {
+    display: flex;
+    width: min(var(--toggle-w), 100%);
+    height: var(--toggle-h);
+    margin: var(--toggle-top) auto 0;
+    padding: 0;
+    border-radius: 30px;
+    overflow: hidden;
+    background-color: var(--toggle-inactive);
+}
+
+.tab {
+    flex: 1 1 50%;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0 8px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--text-main);
+    background-color: var(--toggle-inactive);
+    transition: background-color 0.2s ease;
+}
+
+.tab.active {
+    background-color: var(--toggle-active);
+    color: var(--text-main);
+}
+
+.tab:focus-visible {
+    outline: 2px solid var(--text-main);
+    outline-offset: 2px;
+    z-index: 1;
+    position: relative;
+}
+
+a.tab {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.anonym-inner {
+    align-self: stretch;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: var(--font-family);
+    box-sizing: border-box;
+}
+
+.upload-section {
+    margin-top: 95px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.upload-row-scroll {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+}
+
+.upload-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    font-family: var(--font-family);
+    width: max-content;
+}
+
+.upload-label {
+    margin: 0 16px 0 0;
+    padding: 0;
+    font-family: var(--font-family);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 36px;
+    height: 36px;
+    color: var(--text-main);
+    flex-shrink: 0;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-upload {
+    flex-shrink: 0;
+    width: 163px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 30px;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    background-color: #8fb2b3;
+    font-family: var(--font-family);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: filter 0.15s ease;
+}
+
+.btn-upload:hover {
+    filter: brightness(0.97);
+}
+
+.btn-upload:focus-visible {
+    outline: 2px solid var(--text-main);
+    outline-offset: 2px;
+}
+
+.upload-feedback {
+    flex-shrink: 0;
+    width: 308px;
+    height: 35px;
+    margin-left: 223px;
+    padding: 0 14px;
+    border-radius: 30px;
+    box-sizing: border-box;
+    background-color: #d9d9d9;
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 35px;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-feedback.upload-feedback--error {
+    color: #850000;
+    font-weight: 500;
+}
+
+
+/* Предпросмотр после загрузки CSV */
+/* display:flex на панели перебивает стандартное [hidden], без этого блок виден до загрузки */
+.preview-panel[hidden],
+.config-panel[hidden] {
+    display: none !important;
+}
+
+.preview-panel {
+    width: min(964px, 100%);
+    margin: 0 auto 30px;
+    padding: 10px 20px 12px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    background-color: rgba(143, 178, 179, 0.39);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+}
+
+.preview-panel__title {
+    margin: 0;
+    font-family: var(--font-family);
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-main);
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.preview-panel__table-clip {
+    width: min(924px, 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: #f4f4f4;
+    flex-shrink: 0;
+}
+
+.preview-table {
+    width: 100%;
+    border: none;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #f4f4f4;
+    table-layout: fixed;
+    font-family: var(--font-family);
+    border-radius: 20px;
+}
+
+.preview-table thead th:first-child {
+    border-top-left-radius: 20px;
+}
+
+.preview-table thead th:last-child {
+    border-top-right-radius: 20px;
+}
+
+.preview-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 20px;
+}
+
+.preview-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 20px;
+}
+
+.preview-table thead tr,
+.preview-table tbody tr {
+    height: auto;
+    min-height: 25px;
+}
+
+.preview-table th,
+.preview-table td {
+    border: none;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    min-height: 25px;
+    padding: 5px 8px;
+    box-sizing: border-box;
+    font-weight: 500;
+    color: var(--text-main);
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.25;
+}
+
+.preview-table th:last-child,
+.preview-table td:last-child {
+    border-right: none;
+}
+
+.preview-table thead th {
+    font-size: 16px;
+    text-align: center;
+}
+
+.preview-table tbody td {
+    font-size: 14px;
+    text-align: left;
+}
+
+.preview-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Настройка анонимизации */
+.config-panel {
+    width: min(964px, 100%);
+    margin: 0 auto 30px;
+    padding: 16px 20px 20px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    background-color: rgba(143, 178, 179, 0.39);
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+
+.config-panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.config-panel__title {
+    margin: 0;
+    font-family: var(--font-family);
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-main);
+}
+
+.config-panel__table-clip {
+    width: 100%;
+    border-radius: 20px;
+    overflow: visible;
+    background-color: #f4f4f4;
+}
+
+.config-table {
+    width: 100%;
+    border: none;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #f4f4f4;
+    font-family: var(--font-family);
+    table-layout: fixed;
+    border-radius: 20px;
+}
+
+.config-table thead th:first-child {
+    border-top-left-radius: 20px;
+}
+
+.config-table thead th:last-child {
+    border-top-right-radius: 20px;
+}
+
+.config-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 20px;
+}
+
+.config-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 20px;
+}
+
+.config-table thead tr {
+    height: auto;
+    min-height: 25px;
+}
+
+.config-table tbody tr {
+    min-height: 25px;
+}
+
+.config-table th,
+.config-table td {
+    border: none;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    padding: 5px 8px;
+    box-sizing: border-box;
+    font-weight: 500;
+    color: var(--text-main);
+    vertical-align: middle;
+    font-family: var(--font-family);
+    width: 25%;
+    min-width: 0;
+}
+
+.config-table th:last-child,
+.config-table td:last-child {
+    border-right: none;
+}
+
+.config-table thead th {
+    font-size: 16px;
+    text-align: center;
+    line-height: 1.25;
+    height: auto;
+    min-height: 25px;
+}
+
+.config-table tbody td {
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.25;
+    min-height: 25px;
+    height: auto;
+}
+
+.config-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Выпадающие списки в таблице (метод и параметры) — как на generate */
+.config-table .custom-select--cell {
+    position: relative;
+    display: block;
+}
+
+.config-table .custom-select--method-only {
+    width: 100%;
+    max-width: var(--method-select-w);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.config-table .custom-select--param {
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.config-table .custom-select--cell .custom-select__bar {
+    display: flex;
+    align-items: center;
+    height: var(--method-select-h);
+    padding-left: 8px;
+    padding-right: 2px;
+    border-radius: var(--method-field-radius);
+    background-color: var(--method-field-bg);
+    cursor: pointer;
+    outline: none;
+}
+
+.config-table .custom-select--cell:not(.custom-select--error).is-open .custom-select__bar {
+    outline: 2px solid var(--text-main);
+    outline-offset: 2px;
+}
+
+.config-table .custom-select--cell .custom-select__bar:focus-visible {
+    outline: 2px solid var(--text-main);
+    outline-offset: 2px;
+}
+
+.config-table .custom-select--cell.custom-select--error .custom-select__bar {
+    outline: 2px solid #850000;
+    outline-offset: 2px;
+}
+
+.config-table .custom-select--cell.custom-select--error .custom-select__bar:focus-visible {
+    outline: 2px solid #850000;
+    outline-offset: 2px;
+}
+
+.config-table .custom-select--cell.custom-select--error.is-open .custom-select__bar {
+    outline: 2px solid #850000;
+    outline-offset: 2px;
+}
+
+.config-table .custom-select--cell .custom-select__value {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-weight: 400;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    text-align: center;
+}
+
+.config-table .custom-select--cell.has-value .custom-select__value {
+    color: var(--text-main);
+}
+
+.config-table .custom-select--cell .custom-select__toggle {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 100%;
+    pointer-events: none;
+}
+
+.config-table .custom-select--cell .custom-select__bird {
+    display: block;
+    width: 17px;
+    height: auto;
+    transition: transform 0.25s ease;
+}
+
+.config-table .custom-select--cell.is-open .custom-select__bird {
+    transform: rotate(180deg);
+}
+
+.config-table .custom-select--cell .custom-select__list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 50;
+    overflow: hidden;
+}
+
+.config-table .custom-select--cell .custom-select__list li {
+    margin: 0;
+    padding: 0;
+}
+
+.config-table .custom-select--cell .custom-select__option {
+    width: 100%;
+    margin: 0;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--dropdown-item);
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.config-table .custom-select--cell .custom-select__option:hover {
+    background-color: var(--dropdown-hover-bg);
+    color: var(--dropdown-hover-fg);
+}
+
+.config-table .custom-select--cell .custom-select__option:focus-visible {
+    outline: 2px solid var(--dropdown-item);
+    outline-offset: -2px;
+}
+
+.config-table .method-cell-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    min-height: 25px;
+}
+
+.config-table .params-cell-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.config-table td.example {
+    text-align: center;
+}
+
+.btn-download-final {
+    background-color: var(--accent-color);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-size: 14px;
+}
+
+.btn-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-size: 14px;
+    line-height: 0;
+}
+
+.btn-reset__icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+
+.required {
+    color: #850000;
+    margin-left: 5px;
+}
+
+.actions {
+    margin-top: 8px;
+}
+
+.btn-main-action {
+    width: min(961px, 100%);
+    max-width: 100%;
+    height: 58px;
+    background-color: #8fb2b3;
+    border: none;
+    border-radius: 30px;
+    padding: 0 20px;
+    margin: 20px auto;
+    font-family: var(--font-family);
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+}
+
+.feedback-large {
+    background: #ddd;
+    text-align: center;
+    padding: 40px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #555;
+}
+
+.btn-download-final {
+    float: right;
+    padding: 10px 40px;
+}
+
+.actions::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.select-method {
+    font-family: var(--font-family);
+    font-size: 12px;
+}
+
+.footer {
+    font-family: var(--font-family);
+    background-color: var(--footer-bg);
+    color: #ffffff;
+    text-align: center;
+    padding: 80px 20px;
+    margin-top: auto;
+}
+
+.footer-title {
+    margin: 0;
+    font-size: 48px;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+/* Кнопка Анонимизировать - размер как на странице генерации */
+.btn-main-action {
+    width: min(961px, 100%);
+    max-width: 100%;
+    height: 58px;
+    background-color: #8fb2b3;
+    border: none;
+    border-radius: 30px;
+    padding: 0 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-family: var(--font-family);
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+}
+
+.btn-main-action:hover:not(:disabled) {
+    filter: brightness(0.96);
+}
+
+.btn-main-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.btn-main-action__loader {
+    display: none;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(11, 36, 42, 0.25);
+    border-top-color: var(--text-main);
+    border-radius: 50%;
+    animation: btn-spin 0.7s linear infinite;
+}
+
+.btn-main-action--loading .btn-main-action__loader {
+    display: inline-block;
+}
+
+@keyframes btn-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Кнопка Скачать - изначально скрыта */
+.btn-download-final {
+    display: none;
+    width: min(961px, 100%);
+    max-width: 100%;
+    height: 58px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 0 20px;
+    margin: 20px auto;
+    font-family: var(--font-family);
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-align: center;
+}
+
+.btn-download-final:hover {
+    background-color: #218838;
+}
+
+.btn-download-final.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Окно обратной связи */
+.feedback-large {
+    background-color: #d9d9d9;
+    border-radius: 30px;
+    padding: 16px 24px;
+    margin: 20px 0;
+    font-size: 16px;
+    color: var(--text-main);
+    text-align: center;
+    font-family: var(--font-family);
+    display: none;
+}
+
+.feedback-large.show {
+    display: block;
+}
+
+.feedback-large.feedback-large--error {
+    background-color: #ffe0e0;
+    color: #850000;
+}
+
+.feedback-large.feedback-large--success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.feedback-large.feedback-large--loading {
+    background-color: #e0e0e0;
+    color: #666;
+}
+
+/* Центрируем блок с кнопками */
+.actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+}

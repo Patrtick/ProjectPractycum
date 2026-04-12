@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анонимизация данных</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <nav class="nav" aria-label="Основная навигация">
+                <a class="nav-logo" href="../firstpage/index.html" aria-label="На главную">
+                    <img src="../firstpage/pictures/star_logo.svg" alt="" width="32" height="32" decoding="async">
+                </a>
+                <a href="../firstpage/index.html#features">Возможности</a>
+                <a href="#">Язык</a>
+                <a href="#">Тема</a>
+                <a href="#footer">ССЫЛКА_ФУТЕР</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="tabs" role="tablist" aria-label="Режим">
+                <a href="../generate/index.html" class="tab" role="tab" aria-selected="false">Генерировать</a>
+                <a href="index.html" class="tab active" role="tab" aria-selected="true" aria-current="page">Анонимизировать</a>
+            </div>
+
+            <div class="anonym-inner">
+                <div class="upload-section">
+                    <div class="upload-row-scroll">
+                        <div class="upload-row">
+                            <label class="upload-label" for="csv-file-input">Загрузите CSV файл:</label>
+                            <input type="file" id="csv-file-input" class="upload-input" accept=".csv,text/csv,application/csv" hidden>
+                            <button type="button" class="btn-upload" id="btn-pick-file">выбрать файл</button>
+                            <div class="upload-feedback" id="upload-feedback" role="status" aria-live="polite">окно начальной связи</div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="preview-panel" id="preview-section" hidden>
+                    <h3 class="preview-panel__title">Предпросмотр (первые 4 строки):</h3>
+                    <div class="preview-panel__table-clip">
+                        <table class="preview-table" id="preview-table">
+                            <thead id="preview-thead"></thead>
+                            <tbody id="preview-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="config-panel" id="anonym-config-section" hidden>
+                    <div class="config-panel__header">
+                        <h3 class="config-panel__title">Настройка анонимизации по колонкам:</h3>
+                        <button type="button" class="btn-reset" id="btn-reset-config" aria-label="Сбросить настройки">
+                            <img src="pictures/reset.svg" alt="" class="btn-reset__icon" width="22" height="22" decoding="async">
+                        </button>
+                    </div>
+                    <div class="config-panel__table-clip">
+                        <table class="config-table" id="config-table">
+                            <thead>
+                                <tr>
+                                    <th>колонка</th>
+                                    <th>метод анонимизации</th>
+                                    <th>параметры</th>
+                                    <th>пример</th>
+                                </tr>
+                            </thead>
+                            <tbody id="config-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="actions">
+                    <button type="button" class="btn-main-action" id="btn-anonymize">
+                        <span>Анонимизировать</span>
+                        <span class="btn-main-action__loader"></span>
+                    </button>
+                    <div class="feedback-large" id="actions-feedback" role="status" aria-live="polite"></div>
+                    <button type="button" class="btn-download-final" id="btn-download-final">Скачать CSV</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer" id="footer">
+        <h2 class="footer-title">FOOTER</h2>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
