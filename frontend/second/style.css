@@ -223,13 +223,16 @@ body {
     color: #666;
 }
 
+/* Внешнее кольцо при фокусе (как у селекта) */
 .field-input:focus-visible {
-    outline: 2px solid var(--dropdown-item);
+    outline: 2px solid var(--text-main);
     outline-offset: 2px;
 }
 
+/* Ошибка: то же внешнее кольцо, но красное; без внутренней border */
 .field-input--error {
-    border: 2px solid #850000;
+    outline: 2px solid #850000;
+    outline-offset: 2px;
 }
 
 .field-input--error:focus-visible {
@@ -255,12 +258,28 @@ body {
     outline: none;
 }
 
+/* Как у поля справа: тёмная рамка при фокусе или пока открыт список; после выбора — без рамки */
+.custom-select:not(.custom-select--error).is-open .custom-select__bar {
+    outline: 2px solid var(--text-main);
+    outline-offset: 2px;
+}
+
 .custom-select__bar:focus-visible {
-    outline: 2px solid var(--dropdown-item);
+    outline: 2px solid var(--text-main);
     outline-offset: 2px;
 }
 
 .custom-select--error .custom-select__bar {
+    outline: 2px solid #850000;
+    outline-offset: 2px;
+}
+
+.custom-select--error .custom-select__bar:focus-visible {
+    outline: 2px solid #850000;
+    outline-offset: 2px;
+}
+
+.custom-select--error.is-open .custom-select__bar {
     outline: 2px solid #850000;
     outline-offset: 2px;
 }
@@ -347,12 +366,13 @@ body {
 }
 
 .submit-btn {
-    width: 961px;
+    width: min(961px, 100%);
+    max-width: 100%;
     height: 58px;
     background-color: #8fb2b3;
     border: none;
     border-radius: 30px;
-    padding: 0;
+    padding: 0 20px;
     margin-top: 50px;
     font-family: var(--font-family);
     font-size: 24px;
@@ -362,10 +382,131 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 12px;
+    position: relative;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
     filter: brightness(0.96);
+}
+
+.submit-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.85;
+}
+
+.submit-btn__loader {
+    display: none;
+    width: 22px;
+    height: 22px;
+    border: 3px solid rgba(11, 36, 42, 0.25);
+    border-top-color: var(--text-main);
+    border-radius: 50%;
+    animation: submit-spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+.submit-btn--loading .submit-btn__label {
+    opacity: 0.9;
+}
+
+.submit-btn--loading .submit-btn__loader {
+    display: block;
+}
+
+@keyframes submit-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.preview-section {
+    width: min(961px, 100%);
+    max-width: 100%;
+    margin-top: 40px;
+    padding: 24px;
+    background: #f4f4f4;
+    border-radius: 24px;
+    box-sizing: border-box;
+}
+
+.preview-status {
+    margin: 0 0 16px;
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--text-main);
+}
+
+.preview-status.preview-status--error {
+    color: #850000;
+    font-weight: 500;
+}
+
+.preview-heading {
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.preview-table-scroll {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: var(--font-family);
+}
+
+.preview-table th,
+.preview-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+    white-space: nowrap;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preview-table th {
+    background: var(--toggle-active);
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.preview-table tr:last-child td {
+    border-bottom: none;
+}
+
+.download-btn {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 320px;
+    height: 48px;
+    border: none;
+    border-radius: 30px;
+    background-color: var(--dropdown-item);
+    color: #fff;
+    font-family: var(--font-family);
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.download-btn:hover {
+    filter: brightness(1.08);
+}
+
+.download-btn:focus-visible {
+    outline: 2px solid var(--text-main);
+    outline-offset: 2px;
 }
 
 .checkboxes {
