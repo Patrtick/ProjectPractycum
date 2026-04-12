@@ -1,7 +1,16 @@
+/**
+ * Генерация CSV через бэкенд (см. договорённости с API):
+ * - POST {API_BASE}/api/generate, Content-Type: application/json
+ * - Тело: { template_id: "users"|"orders", rows: 1..10000, columns: string[] }
+ * - Успех 200: { "csv": "..." }
+ * - Ошибки: 422 валидация (FastAPI detail[]), 400 логика (template_id), 500 сервер
+ * - CORS: фронт с localhost:5173, 127.0.0.1:5500 и др. — по настройке бэкенда
+ */
 (function () {
     "use strict";
 
     var API_BASE = "http://localhost:8000";
+    var GENERATE_PATH = "/api/generate";
 
     /** Имя файла шаблона в UI → template_id для API */
     var TEMPLATE_ID_BY_FILE = {
@@ -31,17 +40,6 @@
     var lastTemplateId = "";
 
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".tab").forEach(function (tab) {
-            tab.addEventListener("click", function () {
-                document.querySelectorAll(".tab").forEach(function (t) {
-                    t.classList.remove("active");
-                    t.setAttribute("aria-selected", "false");
-                });
-                tab.classList.add("active");
-                tab.setAttribute("aria-selected", "true");
-            });
-        });
-
         function closeDropdown(root) {
             if (!root) {
                 return;
@@ -341,15 +339,25 @@
             if (t && t.length < 500) {
                 return t;
             }
-            return "Ошибка сервера (" + status + "). Попробуйте позже.";
+            if (status === 400) {
+                return "Некорректный запрос (например, неверный template_id).";
+            }
+            if (status === 422) {
+                return "Ошибка валидации данных. Проверьте количество строк (1–10 000) и выбранные поля.";
+            }
+            if (status >= 500) {
+                return "Внутренняя ошибка сервера. Попробуйте позже.";
+            }
+            return "Ошибка (" + status + "). Попробуйте позже.";
         }
 
+        /** Ответ 200: в первую очередь поле csv из JSON (как в контракте API). */
         function extractCsvFromResponse(response, bodyText, jsonData) {
+            if (jsonData && typeof jsonData === "object" && typeof jsonData.csv === "string") {
+                return jsonData.csv;
+            }
             var ct = (response.headers.get("content-type") || "").toLowerCase();
-            if (ct.indexOf("application/json") !== -1 && jsonData) {
-                if (typeof jsonData.csv === "string") {
-                    return jsonData.csv;
-                }
+            if (ct.indexOf("application/json") !== -1 && jsonData && typeof jsonData === "object") {
                 if (typeof jsonData.content === "string") {
                     return jsonData.content;
                 }
@@ -435,11 +443,11 @@
             };
 
             try {
-                var res = await fetch(API_BASE + "/api/generate", {
+                var res = await fetch(API_BASE + GENERATE_PATH, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Accept: "application/json, text/csv, text/plain, */*"
+                        Accept: "application/json"
                     },
                     body: JSON.stringify(payload)
                 });
@@ -502,6 +510,14 @@
                 if (previewStatus) {
                     previewStatus.classList.remove("preview-status--error");
                     previewStatus.textContent = "";
+                }
+                if (!runClientValidation()) {
+                    if (previewSection && previewStatus && previewStatus.textContent) {
+                        previewSection.hidden = false;
+                    } else if (previewSection) {
+                        previewSection.hidden = true;
+                    }
+                    return;
                 }
                 generateData();
             });
