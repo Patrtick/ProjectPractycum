@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница генерации</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <nav class="nav" aria-label="Основная навигация">
+                <a class="nav-logo" href="../firstpage/index.html" aria-label="На главную">
+                    <img src="../firstpage/pictures/star_logo.svg" alt="" width="32" height="32" decoding="async">
+                </a>
+                <a href="../firstpage/index.html#features">Возможности</a>
+                <a href="#">Язык</a>
+                <a href="#">Тема</a>
+                <a href="#footer">ССЫЛКА_ФУТЕР</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="tabs" role="tablist" aria-label="Режим">
+                <button type="button" class="tab active" role="tab" aria-selected="true">Генерировать</button>
+                <button type="button" class="tab" role="tab" aria-selected="false">Анонимизировать</button>
+            </div>
+
+            <div class="form-row">
+                <div class="field-wrap">
+                    <div class="custom-select" data-dropdown>
+                        <div
+                            class="custom-select__bar"
+                            role="button"
+                            tabindex="0"
+                            aria-expanded="false"
+                            aria-haspopup="listbox"
+                            aria-label="Выберите шаблон"
+                        >
+                            <span class="custom-select__value" data-placeholder="Выберите шаблон">Выберите шаблон</span>
+                            <span class="custom-select__toggle" aria-hidden="true">
+                                <img class="custom-select__bird" src="pictures/bird.svg" alt="" width="17" height="15" decoding="async">
+                            </span>
+                        </div>
+                        <ul class="custom-select__list" role="listbox" hidden>
+                            <li role="none">
+                                <button type="button" class="custom-select__option" role="option" data-value="users.csv">users.csv</button>
+                            </li>
+                            <li role="none">
+                                <button type="button" class="custom-select__option" role="option" data-value="orders.csv">orders.csv</button>
+                            </li>
+                        </ul>
+                        <input type="hidden" name="template" id="template-value" value="">
+                    </div>
+                </div>
+
+                <div class="field-wrap">
+                    <input
+                        type="text"
+                        class="field-input"
+                        name="records"
+                        placeholder="Введите количество записей (от 1 до 10 000)"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="checkboxes" id="checkboxes" hidden>
+                <!-- Чекбоксы будут добавлены динамически -->
+            </div>
+
+            <button type="button" class="submit-btn">Сгенерировать</button>
+        </main>
+    </div>
+
+    <footer class="footer" id="footer">
+        <h2 class="footer-title">FOOTER</h2>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
