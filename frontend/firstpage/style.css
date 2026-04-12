@@ -3,7 +3,7 @@
     --bg-color: #ffffff;
     --text-main: #0B242A;
     --text-secondary: #333333;
-    --btn-color: #8CB1B3;
+    --btn-color: #8fb2b3;
     --card-bg: #eaecef;
     --footer-bg: #06262d;
     --font-family: "Inter", system-ui, sans-serif;
@@ -170,7 +170,7 @@ body {
     width: min(var(--btn-w), 100%);
     height: var(--btn-h);
     padding: 0 16px;
-    border-radius: 36px;
+    border-radius: 30px;
     font-family: var(--font-family);
     font-size: 28px;
     font-weight: 500;
@@ -250,7 +250,7 @@ body {
     align-items: center;
     width: var(--question-mark-size);
     height: var(--question-mark-size);
-    background-color: #d3d6d9;
+    background-color: #d9d9d9;
     border-radius: 50%;
     font-size: 34px;
     font-weight: 600;
