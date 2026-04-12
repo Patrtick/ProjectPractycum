@@ -2,11 +2,16 @@ import csv
 import hashlib
 
 
-def mask(value: str):
+def mask(value: str) -> str:
+    """Маскирование: email → i***@mail.ru, телефон → +79*******67"""
     if "@" in value:
         name, domain = value.split("@")
+        if len(name) <= 2:
+            return "***@" + domain
         return name[:2] + "***@" + domain
-    return value[:2] + "***"
+    if len(value) >= 7:
+        return value[:2] + "****" + value[-2:]
+    return "***"
 
 
 def redact(value: str):
@@ -17,10 +22,15 @@ def pseudo_hash(value: str):
     return hashlib.md5(value.encode()).hexdigest()[:8]
 
 
+def none_method(value: str):
+    return value
+
+
 METHODS = {
     "mask": mask,
     "redact": redact,
-    "hash": pseudo_hash
+    "hash": pseudo_hash,
+    "none": none_method
 }
 
 
@@ -48,10 +58,15 @@ def anonymize_csv(input_path, output_path, rules: dict):
             writer.writeheader()
 
             for row in reader:
-                for col, method in rules.items():
-                    if col in row and method in METHODS:
-                        # Проверка на None или пустые значения перед анонимизацией
-                        if row[col] is not None:
-                            row[col] = METHODS[method](row[col])
+                for col, rule in rules.items():
+                    if col in row:
+                        method = rule
+                        if isinstance(rule, dict):
+                            method = rule.get("method")
+                        
+                        if method in METHODS:
+                            # Проверка на None или пустые значения перед анонимизацией
+                            if row[col] is not None:
+                                row[col] = METHODS[method](str(row[col]))
 
                 writer.writerow(row)
