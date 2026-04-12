@@ -74,7 +74,24 @@
                 <!-- Чекбоксы будут добавлены динамически -->
             </div>
 
-            <button type="button" class="submit-btn">Сгенерировать</button>
+            <button type="button" class="submit-btn" id="submit-generate">
+                <span class="submit-btn__label">Сгенерировать</span>
+                <span class="submit-btn__loader" aria-hidden="true"></span>
+            </button>
+
+            <section class="preview-section" id="preview-section" hidden>
+                <p class="preview-status" id="preview-status" role="status" aria-live="polite"></p>
+                <div class="preview-table-wrap" id="preview-table-wrap" hidden>
+                    <h2 class="preview-heading">Предпросмотр (первые 5 строк)</h2>
+                    <div class="preview-table-scroll">
+                        <table class="preview-table" id="preview-table">
+                            <thead id="preview-thead"></thead>
+                            <tbody id="preview-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <button type="button" class="download-btn" id="download-btn" hidden>Скачать CSV</button>
+            </section>
         </main>
     </div>
 
