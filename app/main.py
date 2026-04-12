@@ -1,23 +1,59 @@
 import json
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
-from fastapi.responses import FileResponse
 import os
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import List, Optional
 
-from app.generator import generate_users, generate_orders
+from app.generator import generate_users, generate_orders, generate_custom_csv_string
 from app.anonymizer import anonymize_csv
 
 app = FastAPI()
 
+# Настройка CORS
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5500",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 OUTPUT_DIR = "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+# Модели для генерации
+class GenerateRequest(BaseModel):
+    template_id: str
+    rows: int = Field(..., ge=1, le=10000)
+    columns: List[str]
 
 @app.get("/")
 def root():
     return {"message": "Backend is working"}
 
+# Новый эндпоинт для фронтенда
+@app.post("/api/generate")
+async def api_generate(request: GenerateRequest):
+    try:
+        csv_data = generate_custom_csv_string(
+            template_id=request.template_id,
+            columns=request.columns,
+            count=request.rows
+        )
+        return {"csv": csv_data}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
-# Генерация
+# Старые эндпоинты генерации (через GET)
 
 @app.get("/generate/users")
 def generate_users_csv(count: int = 10):
