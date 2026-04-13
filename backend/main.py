@@ -1,14 +1,14 @@
 import json
 import os
 import csv
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List
 
-from app.generator import generate_users, generate_orders, generate_custom_csv_file
-from app.anonymizer import anonymize_csv
+from backend.generator import generate_users, generate_orders, generate_custom_csv_file
+from backend.anonymizer import anonymize_csv
 
 app = FastAPI()
 
@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-OUTPUT_DIR = "output"
+OUTPUT_DIR = "../app/output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
