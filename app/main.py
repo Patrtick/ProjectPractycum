@@ -1,0 +1,220 @@
+import json
+import os
+import csv
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
+from app.generator import generate_users, generate_orders, generate_custom_csv_file
+from app.anonymizer import anonymize_csv
+
+app = FastAPI()
+
+# Настройка CORS
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5500",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+OUTPUT_DIR = "output"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+# Модели для генерации
+class GenerateRequest(BaseModel):
+    template_id: str
+    rows: int = Field(..., ge=1, le=10000)
+    columns: List[str]
+
+
+@app.get("/")
+def root():
+    return {"message": "Backend is working"}
+
+
+@app.get("/api/anonymize/methods")
+async def get_methods():
+    return {
+        "methods": [
+            {
+                "id": "mask",
+                "label": "Маскирование",
+                "description": "Заменяет часть данных на символы (*)",
+                "example": "i***@mail.ru",
+                "parameters": []
+            },
+            {
+                "id": "redact",
+                "label": "Удаление",
+                "description": "Полностью удаляет значение",
+                "example": "(пусто)",
+                "parameters": []
+            },
+            {
+                "id": "hash",
+                "label": "Хеширование",
+                "description": "Преобразует значение в хеш",
+                "example": "a1b2c3d4",
+                "parameters": []
+            },
+            {
+                "id": "none",
+                "label": "Без изменений",
+                "description": "Оставляет данные как есть",
+                "example": "Москва",
+                "parameters": []
+            }
+        ]
+    }
+
+
+@app.post("/api/analyze")
+async def analyze(file: UploadFile = File(...)):
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="File must be a CSV")
+
+    input_path = os.path.join(OUTPUT_DIR, f"temp_{file.filename}")
+    try:
+        content = await file.read()
+        if not content:
+            raise HTTPException(status_code=400, detail="File is empty")
+        
+        with open(input_path, "wb") as f:
+            f.write(content)
+
+        with open(input_path, newline="", encoding="utf-8") as f:
+            # Определяем разделитель
+            try:
+                sample = f.read(2048)
+                dialect = csv.Sniffer().sniff(sample)
+                f.seek(0)
+                reader = csv.reader(f, dialect=dialect)
+            except Exception:
+                f.seek(0)
+                reader = csv.reader(f)
+
+            headers = next(reader, None)
+            if not headers:
+                raise HTTPException(status_code=400, detail="CSV file has no headers")
+
+            preview_data = []
+            total_rows = 0
+            for row in reader:
+                if len(preview_data) < 5:
+                    preview_data.append(row)
+                total_rows += 1
+
+            columns = []
+            for i, name in enumerate(headers):
+                sample_values = []
+                for pr in preview_data:
+                    if i < len(pr):
+                        sample_values.append(pr[i])
+                
+                # Базовое определение типа
+                col_type = "string"
+                if any("@" in str(v) for v in sample_values):
+                    col_type = "email"
+                elif any(str(v).replace("+", "").isdigit() for v in sample_values):
+                    col_type = "phone"
+
+                columns.append({
+                    "name": name,
+                    "type": col_type,
+                    "sample_values": sample_values[:3]
+                })
+
+            return {
+                "filename": file.filename,
+                "total_rows": total_rows,
+                "columns": columns,
+                "preview_data": preview_data
+            }
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if os.path.exists(input_path):
+            os.remove(input_path)
+
+
+@app.post("/api/anonymize")
+async def api_anonymize(file: UploadFile = File(...), rules: str = Form("{}")):
+    try:
+        rules_dict = json.loads(rules)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON rules")
+
+    input_path = os.path.join(OUTPUT_DIR, f"upload_{file.filename}")
+    output_path = os.path.join(OUTPUT_DIR, f"anonymized_{file.filename}")
+
+    try:
+        content = await file.read()
+        with open(input_path, "wb") as f:
+            f.write(content)
+
+        anonymize_csv(input_path, output_path, rules_dict)
+
+        return FileResponse(
+            output_path,
+            media_type="text/csv",
+            filename=f"anonymized_{file.filename}"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/generate")
+async def api_generate(request: GenerateRequest):
+    try:
+        filename = f"{request.template_id}_generated_{os.urandom(4).hex()}.csv"
+        output_path = os.path.join(OUTPUT_DIR, filename)
+        
+        generate_custom_csv_file(
+            template_id=request.template_id,
+            columns=request.columns,
+            count=request.rows,
+            output_path=output_path
+        )
+        
+        return FileResponse(
+            output_path,
+            media_type="text/csv",
+            filename=filename
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Старые эндпоинты анонимизации (для обратной совместимости)
+@app.post("/anonymize")
+async def anonymize(file: UploadFile = File(...), rules: str = Form("{}")):
+    return await api_anonymize(file, rules)
+
+
+# Старые эндпоинты генерации (через GET)
+@app.get("/generate/users")
+def generate_users_csv(count: int = 10):
+    path = os.path.join(OUTPUT_DIR, "users.csv")
+    generate_users(path, count)
+    return FileResponse(path, filename="users.csv")
+
+
+@app.get("/generate/orders")
+def generate_orders_csv(count: int = 10):
+    path = os.path.join(OUTPUT_DIR, "orders.csv")
+    generate_orders(path, count)
+    return FileResponse(path, filename="orders.csv")
