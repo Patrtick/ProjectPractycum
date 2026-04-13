@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генерация и анонимизация данных</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <nav class="nav" aria-label="Основная навигация">
+                <a class="nav-logo" href="#" onclick="showSection('home'); return false;" aria-label="На главную">
+                    <img src="pictures/star_logo.svg" alt="" width="32" height="32" decoding="async">
+                </a>
+                <a href="#features" onclick="showSection('home'); return false;">Возможности</a>
+                <a href="#">Язык</a>
+                <a href="#">Тема</a>
+                <a href="#footer">ССЫЛКА_ФУТЕР</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- HOME PAGE -->
+            <section id="home-section" class="page-section active">
+                <section class="hero">
+                    <h1><span class="hero-title-nowrap">Синтетическая генерация</span><br>и анонимизация данных</h1>
+                    <p>Сервис для быстрой и удобной работы<br>с искусственными данными</p>
+                </section>
+
+                <section class="features" id="features">
+                    <div class="feature-column">
+                        <a class="feature-btn" href="#" onclick="showSection('generate'); return false;">Генерация</a>
+                        <div class="feature-card">
+                            <div class="tooltip-container">
+                                <div class="question-mark">?</div>
+                                <div class="tooltip-text">Здесь будет подробная информация о процессе генерации синтетических данных.</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="gif-placeholder">GIF, где<br>показано, как<br>работает<br>генерация</div>
+                            </div>
+                            <div class="bottom-hint">при наведении на знак вопроса<br>всплывает текстовая информация<br>о генерации</div>
+                        </div>
+                    </div>
+
+                    <div class="feature-column">
+                        <a class="feature-btn" href="#" onclick="showSection('anonym'); return false;">Анонимизация</a>
+                        <div class="feature-card">
+                            <div class="tooltip-container">
+                                <div class="question-mark">?</div>
+                                <div class="tooltip-text">Здесь будет подробная информация о процессе анонимизации данных.</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="gif-placeholder">GIF, где<br>показано, как<br>работает<br>анонимизация</div>
+                            </div>
+                            <div class="bottom-hint">при наведении на знак вопроса<br>всплывает текстовая<br>информация об анонимизации</div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- GENERATE PAGE -->
+            <section id="generate-section" class="page-section">
+                <div class="tabs" role="tablist" aria-label="Режим">
+                    <a href="#" class="tab active" role="tab" aria-selected="true" aria-current="page" onclick="showSection('generate'); return false;">Генерировать</a>
+                    <a href="#" class="tab" role="tab" aria-selected="false" onclick="showSection('anonym'); return false;">Анонимизировать</a>
+                </div>
+
+                <div class="form-row">
+                    <div class="field-wrap">
+                        <div class="custom-select" data-dropdown>
+                            <div
+                                class="custom-select__bar"
+                                role="button"
+                                tabindex="0"
+                                aria-expanded="false"
+                                aria-haspopup="listbox"
+                                aria-label="Выберите шаблон"
+                            >
+                                <span class="custom-select__value" data-placeholder="Выберите шаблон">Выберите шаблон</span>
+                                <span class="custom-select__toggle" aria-hidden="true">
+                                    <img class="custom-select__bird" src="pictures/bird.svg" alt="" width="17" height="15" decoding="async">
+                                </span>
+                            </div>
+                            <ul class="custom-select__list" role="listbox" hidden>
+                                <li role="none">
+                                    <button type="button" class="custom-select__option" role="option" data-value="users.csv">users.csv</button>
+                                </li>
+                                <li role="none">
+                                    <button type="button" class="custom-select__option" role="option" data-value="orders.csv">orders.csv</button>
+                                </li>
+                            </ul>
+                            <input type="hidden" name="template" id="template-value" value="">
+                        </div>
+                    </div>
+
+                    <div class="field-wrap">
+                        <input
+                            type="text"
+                            class="field-input"
+                            name="records"
+                            placeholder="Введите количество записей (от 1 до 10 000)"
+                            autocomplete="off"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="checkboxes" id="checkboxes" hidden>
+                    <!-- Чекбоксы будут добавлены динамически -->
+                </div>
+
+                <button type="button" class="submit-btn" id="submit-generate">
+                    <span class="submit-btn__label">Сгенерировать</span>
+                    <span class="submit-btn__loader" aria-hidden="true"></span>
+                </button>
+
+                <section class="preview-section" id="preview-section" hidden>
+                    <p class="preview-status" id="preview-status" role="status" aria-live="polite"></p>
+                    <div class="preview-table-wrap" id="preview-table-wrap" hidden>
+                        <h2 class="preview-heading">Предпросмотр (первые 5 строк)</h2>
+                        <div class="preview-table-scroll">
+                            <table class="preview-table" id="preview-table">
+                                <thead id="preview-thead"></thead>
+                                <tbody id="preview-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <button type="button" class="download-btn" id="download-btn" hidden>Скачать CSV</button>
+                </section>
+            </section>
+
+            <!-- ANONYMIZE PAGE -->
+            <section id="anonym-section" class="page-section">
+                <div class="tabs" role="tablist" aria-label="Режим">
+                    <a href="#" class="tab" role="tab" aria-selected="false" onclick="showSection('generate'); return false;">Генерировать</a>
+                    <a href="#" class="tab active" role="tab" aria-selected="true" aria-current="page" onclick="showSection('anonym'); return false;">Анонимизировать</a>
+                </div>
+
+                <div class="anonym-inner">
+                    <div class="upload-section">
+                        <div class="upload-row-scroll">
+                            <div class="upload-row">
+                                <label class="upload-label" for="csv-file-input">Загрузите CSV файл:</label>
+                                <input type="file" id="csv-file-input" class="upload-input" accept=".csv,text/csv,application/csv" hidden>
+                                <button type="button" class="btn-upload" id="btn-pick-file">выбрать файл</button>
+                                <div class="upload-feedback" id="upload-feedback" role="status" aria-live="polite">окно начальной связи</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <section class="preview-panel" id="preview-section-anonym" hidden>
+                        <h3 class="preview-panel__title">Предпросмотр (первые 4 строки):</h3>
+                        <div class="preview-panel__table-clip">
+                            <table class="preview-table" id="preview-table-anonym">
+                                <thead id="preview-thead-anonym"></thead>
+                                <tbody id="preview-tbody-anonym"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="config-panel" id="anonym-config-section" hidden>
+                        <div class="config-panel__header">
+                            <h3 class="config-panel__title">Настройка анонимизации по колонкам:</h3>
+                            <button type="button" class="btn-reset" id="btn-reset-config" aria-label="Сбросить настройки">
+                                <img src="pictures/reset.svg" alt="" class="btn-reset__icon" width="22" height="22" decoding="async">
+                            </button>
+                        </div>
+                        <div class="config-panel__table-clip">
+                            <table class="config-table" id="config-table">
+                                <thead>
+                                    <tr>
+                                        <th>колонка</th>
+                                        <th>метод анонимизации</th>
+                                        <th>параметры</th>
+                                        <th>пример</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="config-tbody"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <div class="actions">
+                        <button type="button" class="btn-main-action" id="btn-anonymize">
+                            <span>Анонимизировать</span>
+                            <span class="btn-main-action__loader"></span>
+                        </button>
+                        <div class="feedback-large" id="actions-feedback" role="status" aria-live="polite"></div>
+                        <button type="button" class="btn-download-final" id="btn-download-final">Скачать CSV</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer" id="footer">
+        <h2 class="footer-title">FOOTER</h2>
+    </footer>
+
+    <script>
+        function showSection(sectionId) {
+            // Скройте все секции
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Обновите активный статус табов
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.setAttribute('aria-selected', 'false');
+                tab.classList.remove('active');
+            });
+            
+            // Покажите выбранную секцию
+            const activeSection = document.getElementById(sectionId + '-section');
+            if (activeSection) {
+                activeSection.classList.add('active');
+            }
+            
+            // Обновите активный таб
+            const activeTabs = document.querySelectorAll(`a[onclick*="showSection('${sectionId}')"]`);
+            activeTabs.forEach(tab => {
+                tab.setAttribute('aria-selected', 'true');
+                tab.classList.add('active');
+            });
+
+            // Скролл вверх
+            window.scrollTo(0, 0);
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
