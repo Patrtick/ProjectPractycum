@@ -4,8 +4,11 @@ import hashlib
 
 def mask(value: str) -> str:
     """Маскирование: email → i***@mail.ru, телефон → +79*******67"""
+    if not value:
+        return value
+    value = str(value).strip()
     if "@" in value:
-        name, domain = value.split("@")
+        name, domain = value.split("@", 1)
         if len(name) <= 2:
             return "***@" + domain
         return name[:2] + "***@" + domain
@@ -19,7 +22,9 @@ def redact(value: str):
 
 
 def pseudo_hash(value: str):
-    return hashlib.md5(value.encode()).hexdigest()[:8]
+    if not value:
+        return value
+    return hashlib.md5(str(value).encode()).hexdigest()[:8]
 
 
 def none_method(value: str):
@@ -39,6 +44,7 @@ def anonymize_csv(input_path, output_path, rules: dict):
         # Пытаемся определить разделитель
         try:
             sample = infile.read(1024)
+            infile.seek(0)
             dialect = csv.Sniffer().sniff(sample)
             infile.seek(0)
             reader = csv.DictReader(infile, dialect=dialect)
@@ -48,7 +54,6 @@ def anonymize_csv(input_path, output_path, rules: dict):
 
         fieldnames = reader.fieldnames
         if not fieldnames:
-            # Пустой файл, просто копируем заголовок (которого нет) или выходим
             with open(output_path, "w", newline="", encoding="utf-8") as outfile:
                 pass
             return
@@ -59,14 +64,12 @@ def anonymize_csv(input_path, output_path, rules: dict):
 
             for row in reader:
                 for col, rule in rules.items():
-                    if col in row:
+                    if col in row and row[col] is not None:
                         method = rule
                         if isinstance(rule, dict):
-                            method = rule.get("method")
+                            method = rule.get("method", "none")
                         
                         if method in METHODS:
-                            # Проверка на None или пустые значения перед анонимизацией
-                            if row[col] is not None:
-                                row[col] = METHODS[method](str(row[col]))
+                            row[col] = METHODS[method](str(row[col]))
 
                 writer.writerow(row)

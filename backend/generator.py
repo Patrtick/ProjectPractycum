@@ -56,7 +56,7 @@ def generate_custom_csv_string(template_id: str, columns: list, count: int) -> s
     if not valid_columns:
         valid_columns = list(template_fields.keys())
 
-    output = io.StringIO(newline="")
+    output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=valid_columns)
     writer.writeheader()
 
@@ -67,7 +67,7 @@ def generate_custom_csv_string(template_id: str, columns: list, count: int) -> s
     return output.getvalue()
 
 
-# Старые функции для обратной совместимости (если нужны)
+# Старые функции для обратной совместимости
 def generate_users(path, count):
     columns = ["full_name", "email", "phone", "city", "registration_date"]
     generate_custom_csv_file("users", columns, count, path)

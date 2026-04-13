@@ -204,33 +204,28 @@
 
     <script>
         function showSection(sectionId) {
-            // Скройте все секции
             const sections = document.querySelectorAll('.page-section');
             sections.forEach(section => {
                 section.classList.remove('active');
             });
             
-            // Обновите активный статус табов
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => {
                 tab.setAttribute('aria-selected', 'false');
                 tab.classList.remove('active');
             });
             
-            // Покажите выбранную секцию
             const activeSection = document.getElementById(sectionId + '-section');
             if (activeSection) {
                 activeSection.classList.add('active');
             }
             
-            // Обновите активный таб
             const activeTabs = document.querySelectorAll(`a[onclick*="showSection('${sectionId}')"]`);
             activeTabs.forEach(tab => {
                 tab.setAttribute('aria-selected', 'true');
                 tab.classList.add('active');
             });
 
-            // Скролл вверх
             window.scrollTo(0, 0);
         }
     </script>

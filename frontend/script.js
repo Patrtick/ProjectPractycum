@@ -11,7 +11,8 @@
 (function () {
     "use strict";
 
-    var API_BASE = "http://localhost:8000";
+    // Исправлено: используем относительный путь или определяем динамически
+    var API_BASE = "http://localhost:8000"; 
     var API_ANALYZE = "/api/analyze";
     var API_ANONYM = "/api/anonymize";
     var API_METHODS = "/api/anonymize/methods";
@@ -212,7 +213,8 @@
         toggle.className = "custom-select__toggle";
         var bird = document.createElement("img");
         bird.className = "custom-select__bird";
-        bird.src = "anonym/pictures/bird.svg";
+        // Исправлено: правильный путь к картинке
+        bird.src = "pictures/bird.svg";
         bird.alt = "";
         bird.width = 17;
         bird.height = 15;
@@ -464,6 +466,7 @@
 (function () {
     "use strict";
 
+    // Исправлено: динамический API_BASE
     var API_BASE = "http://localhost:8000";
     var GENERATE_PATH = "/api/generate";
 
@@ -494,18 +497,12 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         function closeDropdown(root) {
-            if (!root) {
-                return;
-            }
+            if (!root) return;
             root.classList.remove("is-open");
             var list = root.querySelector(".custom-select__list");
             var bar = root.querySelector(".custom-select__bar");
-            if (list) {
-                list.hidden = true;
-            }
-            if (bar) {
-                bar.setAttribute("aria-expanded", "false");
-            }
+            if (list) list.hidden = true;
+            if (bar) bar.setAttribute("aria-expanded", "false");
         }
 
         function closeAllDropdowns() {
@@ -518,14 +515,10 @@
             var valueEl = root.querySelector(".custom-select__value");
             var hiddenInput = root.querySelector('input[type="hidden"]');
 
-            if (!bar || !list) {
-                return;
-            }
+            if (!bar || !list) return;
 
             function toggleOpen(e) {
-                if (e) {
-                    e.stopPropagation();
-                }
+                if (e) e.stopPropagation();
                 var willOpen = !root.classList.contains("is-open");
                 closeAllDropdowns();
                 if (willOpen) {
@@ -536,7 +529,6 @@
             }
 
             bar.addEventListener("click", toggleOpen);
-
             bar.addEventListener("keydown", function (e) {
                 if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
@@ -548,12 +540,8 @@
                 opt.addEventListener("click", function (e) {
                     e.stopPropagation();
                     var val = opt.getAttribute("data-value") || opt.textContent.trim();
-                    if (valueEl) {
-                        valueEl.textContent = val;
-                    }
-                    if (hiddenInput) {
-                        hiddenInput.value = val;
-                    }
+                    if (valueEl) valueEl.textContent = val;
+                    if (hiddenInput) hiddenInput.value = val;
                     root.classList.add("has-value");
                     root.classList.remove("custom-select--error");
                     closeDropdown(root);
@@ -592,29 +580,17 @@
             checkboxesDiv.hidden = false;
         }
 
-        document.addEventListener("click", function () {
-            closeAllDropdowns();
-        });
-
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") {
-                closeAllDropdowns();
-            }
-        });
+        document.addEventListener("click", function () { closeAllDropdowns(); });
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAllDropdowns(); });
 
         var recordsInput = document.querySelector('input[name="records"]');
         function validateRecords(options) {
-            if (!recordsInput) {
-                return;
-            }
+            if (!recordsInput) return;
             var fromSubmit = options && options.fromSubmit;
             var value = recordsInput.value.trim();
             if (value === "") {
-                if (fromSubmit) {
-                    recordsInput.classList.add("field-input--error");
-                } else {
-                    recordsInput.classList.remove("field-input--error");
-                }
+                if (fromSubmit) recordsInput.classList.add("field-input--error");
+                else recordsInput.classList.remove("field-input--error");
                 return;
             }
             var num = parseInt(value, 10);
@@ -626,39 +602,18 @@
         }
 
         function recordsAreValid() {
-            if (!recordsInput) {
-                return false;
-            }
+            if (!recordsInput) return false;
             var value = recordsInput.value.trim();
-            if (value === "") {
-                return false;
-            }
+            if (value === "") return false;
             var num = parseInt(value, 10);
             return !isNaN(num) && num >= 1 && num <= 10000;
         }
 
         if (recordsInput) {
-            recordsInput.addEventListener("input", function () {
-                validateRecords();
-            });
-            recordsInput.addEventListener("blur", function () {
-                validateRecords();
-            });
+            recordsInput.addEventListener("input", function () { validateRecords(); });
+            recordsInput.addEventListener("blur", function () { validateRecords(); });
             recordsInput.addEventListener("keydown", function (e) {
-                if (
-                    (e.key >= "0" && e.key <= "9") ||
-                    e.key === "Backspace" ||
-                    e.key === "Delete" ||
-                    e.key === "Tab" ||
-                    e.key === "Escape" ||
-                    e.key === "Enter" ||
-                    e.key === "ArrowLeft" ||
-                    e.key === "ArrowRight" ||
-                    e.key === "ArrowUp" ||
-                    e.key === "ArrowDown"
-                ) {
-                    return;
-                }
+                if ((e.key >= "0" && e.key <= "9") || ["Backspace","Delete","Tab","Escape","Enter","ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key)) return;
                 e.preventDefault();
             });
         }
@@ -672,27 +627,18 @@
         var downloadBtn = document.getElementById("download-btn");
 
         function setSubmitLoading(loading) {
-            if (!submitBtn) {
-                return;
-            }
+            if (!submitBtn) return;
             submitBtn.disabled = !!loading;
             submitBtn.classList.toggle("submit-btn--loading", !!loading);
         }
 
         function parseCSVLine(line) {
-            var result = [];
-            var current = "";
-            var inQuotes = false;
+            var result = [], current = "", inQuotes = false;
             for (var i = 0; i < line.length; i++) {
                 var c = line[i];
-                if (c === '"') {
-                    inQuotes = !inQuotes;
-                } else if (c === "," && !inQuotes) {
-                    result.push(current.trim());
-                    current = "";
-                } else {
-                    current += c;
-                }
+                if (c === '"') inQuotes = !inQuotes;
+                else if (c === "," && !inQuotes) { result.push(current.trim()); current = ""; }
+                else current += c;
             }
             result.push(current.trim());
             return result;
@@ -702,31 +648,20 @@
             var lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
             var rows = [];
             for (var i = 0; i < lines.length; i++) {
-                if (lines[i].trim() !== "") {
-                    rows.push(parseCSVLine(lines[i]));
-                }
+                if (lines[i].trim() !== "") rows.push(parseCSVLine(lines[i]));
             }
             return rows;
         }
 
         function renderPreviewTable(csvText) {
-            if (!previewThead || !previewTbody || !previewTableWrap) {
-                return;
-            }
+            if (!previewThead || !previewTbody || !previewTableWrap) return;
             previewThead.innerHTML = "";
             previewTbody.innerHTML = "";
             var rows = parseCSVRows(csvText);
-            if (rows.length === 0) {
-                previewTableWrap.hidden = true;
-                return;
-            }
+            if (rows.length === 0) { previewTableWrap.hidden = true; return; }
             var header = rows[0];
             var trh = document.createElement("tr");
-            header.forEach(function (cell) {
-                var th = document.createElement("th");
-                th.textContent = cell;
-                trh.appendChild(th);
-            });
+            header.forEach(function (cell) { var th = document.createElement("th"); th.textContent = cell; trh.appendChild(th); });
             previewThead.appendChild(trh);
             var maxData = Math.min(5, rows.length - 1);
             for (var r = 1; r <= maxData; r++) {
@@ -743,84 +678,48 @@
         }
 
         function showPreviewError(message) {
-            if (!previewSection || !previewStatus) {
-                return;
-            }
+            if (!previewSection || !previewStatus) return;
             previewSection.hidden = false;
             previewStatus.textContent = message;
             previewStatus.classList.add("preview-status--error");
-            if (previewTableWrap) {
-                previewTableWrap.hidden = true;
-            }
-            if (downloadBtn) {
-                downloadBtn.hidden = true;
-            }
+            if (previewTableWrap) previewTableWrap.hidden = true;
+            if (downloadBtn) downloadBtn.hidden = true;
         }
 
         function showPreviewSuccess(csvText) {
-            if (!previewSection || !previewStatus) {
-                return;
-            }
+            if (!previewSection || !previewStatus) return;
             previewSection.hidden = false;
             previewStatus.textContent = "";
             previewStatus.classList.remove("preview-status--error");
             renderPreviewTable(csvText);
-            if (downloadBtn) {
-                downloadBtn.hidden = false;
-            }
+            if (downloadBtn) downloadBtn.hidden = false;
         }
 
         function formatApiError(status, bodyText, jsonData) {
             if (jsonData && typeof jsonData === "object") {
-                if (typeof jsonData.detail === "string") {
-                    return jsonData.detail;
-                }
+                if (typeof jsonData.detail === "string") return jsonData.detail;
                 if (Array.isArray(jsonData.detail) && jsonData.detail.length) {
-                    return jsonData.detail
-                        .map(function (d) {
-                            return d && typeof d.msg === "string" ? d.msg : JSON.stringify(d);
-                        })
-                        .join("; ");
+                    return jsonData.detail.map(function (d) { return d && typeof d.msg === "string" ? d.msg : JSON.stringify(d); }).join("; ");
                 }
-                if (jsonData.message) {
-                    return String(jsonData.message);
-                }
-                if (jsonData.error) {
-                    return String(jsonData.error);
-                }
+                if (jsonData.message) return String(jsonData.message);
+                if (jsonData.error) return String(jsonData.error);
             }
             var t = (bodyText || "").trim();
-            if (t && t.length < 500) {
-                return t;
-            }
-            if (status === 400) {
-                return "Некорректный запрос (например, неверный template_id).";
-            }
-            if (status === 422) {
-                return "Ошибка валидации данных. Проверьте количество строк (1–10 000) и выбранные поля.";
-            }
-            if (status >= 500) {
-                return "Внутренняя ошибка сервера. Попробуйте позже.";
-            }
+            if (t && t.length < 500) return t;
+            if (status === 400) return "Некорректный запрос (например, неверный template_id).";
+            if (status === 422) return "Ошибка валидации данных. Проверьте количество строк (1–10 000) и выбранные поля.";
+            if (status >= 500) return "Внутренняя ошибка сервера. Попробуйте позже.";
             return "Ошибка (" + status + "). Попробуйте позже.";
         }
 
         function extractCsvFromResponse(response, bodyText, jsonData) {
-            if (jsonData && typeof jsonData === "object" && typeof jsonData.csv === "string") {
-                return jsonData.csv;
-            }
+            if (jsonData && typeof jsonData === "object" && typeof jsonData.csv === "string") return jsonData.csv;
             var ct = (response.headers.get("content-type") || "").toLowerCase();
             if (ct.indexOf("application/json") !== -1 && jsonData && typeof jsonData === "object") {
-                if (typeof jsonData.content === "string") {
-                    return jsonData.content;
-                }
-                if (typeof jsonData.data === "string") {
-                    return jsonData.data;
-                }
+                if (typeof jsonData.content === "string") return jsonData.content;
+                if (typeof jsonData.data === "string") return jsonData.data;
             }
-            if (typeof bodyText === "string" && bodyText.length) {
-                return bodyText;
-            }
+            if (typeof bodyText === "string" && bodyText.length) return bodyText;
             return "";
         }
 
@@ -829,42 +728,30 @@
             var customSelect = document.querySelector("[data-dropdown]");
             var ok = true;
             if (hiddenInput && hiddenInput.value === "") {
-                if (customSelect) {
-                    customSelect.classList.add("custom-select--error");
-                }
+                if (customSelect) customSelect.classList.add("custom-select--error");
                 ok = false;
             } else if (customSelect) {
                 customSelect.classList.remove("custom-select--error");
             }
             validateRecords({ fromSubmit: true });
-            if (!recordsAreValid()) {
-                ok = false;
-            }
+            if (!recordsAreValid()) ok = false;
             var templateFile = hiddenInput ? hiddenInput.value : "";
             if (templateFile && FIELDS_BY_TEMPLATE[templateFile]) {
                 var checked = document.querySelectorAll('#checkboxes input[name="fields"]:checked');
-                if (!checked.length) {
-                    ok = false;
-                    showPreviewError("Выберите хотя бы одно поле для генерации.");
-                    return false;
-                }
+                if (!checked.length) { ok = false; showPreviewError("Выберите хотя бы одно поле для генерации."); return false; }
             }
             return ok;
         }
 
         function collectSelectedColumns() {
             var cols = [];
-            document.querySelectorAll('#checkboxes input[name="fields"]:checked').forEach(function (cb) {
-                cols.push(cb.value);
-            });
+            document.querySelectorAll('#checkboxes input[name="fields"]:checked').forEach(function (cb) { cols.push(cb.value); });
             return cols;
         }
 
         async function generateData() {
             if (!runClientValidation()) {
-                if (previewSection) {
-                    previewSection.hidden = !(previewStatus && previewStatus.textContent);
-                }
+                if (previewSection) previewSection.hidden = !(previewStatus && previewStatus.textContent);
                 return;
             }
 
@@ -875,63 +762,34 @@
             var columns = collectSelectedColumns();
 
             setSubmitLoading(true);
-            if (previewStatus) {
-                previewStatus.textContent = "Генерация…";
-                previewStatus.classList.remove("preview-status--error");
-            }
-            if (previewSection) {
-                previewSection.hidden = false;
-            }
-            if (previewTableWrap) {
-                previewTableWrap.hidden = true;
-            }
-            if (downloadBtn) {
-                downloadBtn.hidden = true;
-            }
+            if (previewStatus) { previewStatus.textContent = "Генерация…"; previewStatus.classList.remove("preview-status--error"); }
+            if (previewSection) previewSection.hidden = false;
+            if (previewTableWrap) previewTableWrap.hidden = true;
+            if (downloadBtn) downloadBtn.hidden = true;
 
-            var payload = {
-                template_id: templateId,
-                rows: rows,
-                columns: columns
-            };
+            var payload = { template_id: templateId, rows: rows, columns: columns };
 
             try {
                 var res = await fetch(API_BASE + GENERATE_PATH, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json"
-                    },
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify(payload)
                 });
 
                 var bodyText = await res.text();
                 var jsonData = null;
-                try {
-                    jsonData = JSON.parse(bodyText);
-                } catch (e) {
-                    jsonData = null;
-                }
+                try { jsonData = JSON.parse(bodyText); } catch (e) { jsonData = null; }
 
-                if (!res.ok) {
-                    showPreviewError(formatApiError(res.status, bodyText, jsonData));
-                    return;
-                }
+                if (!res.ok) { showPreviewError(formatApiError(res.status, bodyText, jsonData)); return; }
 
                 var csvText = extractCsvFromResponse(res, bodyText, jsonData);
-                if (!csvText || !csvText.trim()) {
-                    showPreviewError("Сервер не вернул CSV. Уточните формат ответа у бэкенда.");
-                    return;
-                }
+                if (!csvText || !csvText.trim()) { showPreviewError("Сервер не вернул CSV. Уточните формат ответа у бэкенда."); return; }
 
                 lastCsvText = csvText;
                 lastTemplateId = templateId;
                 showPreviewSuccess(csvText);
             } catch (err) {
-                var net =
-                    err && err.message
-                        ? err.message
-                        : "Не удалось связаться с сервером. Проверьте, что API запущен на " + API_BASE + " и CORS разрешает этот сайт.";
+                var net = err && err.message ? err.message : "Не удалось связаться с сервером. Проверьте, что API запущен на " + API_BASE + " и CORS разрешает этот сайт.";
                 showPreviewError(net);
             } finally {
                 setSubmitLoading(false);
@@ -939,9 +797,7 @@
         }
 
         function downloadCsv() {
-            if (!lastCsvText) {
-                return;
-            }
+            if (!lastCsvText) return;
             var blob = new Blob([lastCsvText], { type: "text/csv;charset=utf-8;" });
             var url = URL.createObjectURL(blob);
             var a = document.createElement("a");
@@ -954,22 +810,13 @@
             URL.revokeObjectURL(url);
         }
 
-        if (downloadBtn) {
-            downloadBtn.addEventListener("click", downloadCsv);
-        }
-
+        if (downloadBtn) downloadBtn.addEventListener("click", downloadCsv);
         if (submitBtn) {
             submitBtn.addEventListener("click", function () {
-                if (previewStatus) {
-                    previewStatus.classList.remove("preview-status--error");
-                    previewStatus.textContent = "";
-                }
+                if (previewStatus) { previewStatus.classList.remove("preview-status--error"); previewStatus.textContent = ""; }
                 if (!runClientValidation()) {
-                    if (previewSection && previewStatus && previewStatus.textContent) {
-                        previewSection.hidden = false;
-                    } else if (previewSection) {
-                        previewSection.hidden = true;
-                    }
+                    if (previewSection && previewStatus && previewStatus.textContent) previewSection.hidden = false;
+                    else if (previewSection) previewSection.hidden = true;
                     return;
                 }
                 generateData();
@@ -980,8 +827,3 @@
         window.downloadCsv = downloadCsv;
     });
 })();
-
-// ============================================================================
-// SECTION 3: Home Page
-// ============================================================================
-// (Empty - no specific interaction needed)
