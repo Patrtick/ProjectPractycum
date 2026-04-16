@@ -4,21 +4,21 @@ import os
 import random
 from faker import Faker
 
-fake = Faker()
+fake = Faker('ru_RU')
 
 # Маппинг полей к функциям генерации
 FIELDS_MAP = {
     "users": {
         "full_name": lambda i: fake.name(),
         "email": lambda i: fake.email(),
-        "phone": lambda i: fake.phone_number(),
+        "phone": lambda i: fake.numerify("+7 (###) ###-##-##"),
         "city": lambda i: fake.city(),
-        "registration_date": lambda i: fake.date_this_year().isoformat(),
+        "registration_date": lambda i: fake.date_this_year().strftime("%d.%m.%Y"),
     },
     "orders": {
         "order_id": lambda i: i + 1,
         "user_id": lambda i: random.randint(1, 100),
-        "date": lambda i: fake.date_this_year().isoformat(),
+        "date": lambda i: fake.date_this_year().strftime("%d.%m.%Y"),
         "amount": lambda i: round(random.uniform(10, 1000), 2),
         "status": lambda i: random.choice(["new", "paid", "cancelled", "shipped"]),
     }
