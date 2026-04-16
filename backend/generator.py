@@ -1,7 +1,7 @@
 import csv
 import io
-import os
 import random
+
 from faker import Faker
 
 fake = Faker('ru_RU')

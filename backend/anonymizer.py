@@ -1,5 +1,6 @@
 import csv
 import hashlib
+import re
 
 
 def mask(value: str) -> str:
@@ -7,6 +8,17 @@ def mask(value: str) -> str:
     if not value:
         return value
     value = str(value).strip()
+
+    # Даты: дд.мм.гггг -> **.**.20**
+    if re.match(r"^\d{2}\.\d{2}\.\d{4}$", value):
+        return "**.**.20**"
+
+    # Телефоны: +7 (###) ###-##-## -> +7 (###) ***-**-##
+    match = re.match(r"^\+7 \((\d{3})\) (\d{3})-(\d{2})-(\d{2})$", value)
+    if match:
+        code, part1, part2, last = match.groups()
+        return f"+7 ({code}) ***-**-{last}"
+
     if "@" in value:
         name, domain = value.split("@", 1)
         if len(name) <= 2:
