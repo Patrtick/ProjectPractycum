@@ -37,7 +37,7 @@
     --field-h: 36px;
     --field-radius: 30px;
     --field-bg: #d9d9d9;
-    --form-gap-x: 165px;
+    --form-gap-x: 207px;
     --form-offset-top: 113px;
 
     /* Dropdowns and selects */
@@ -55,11 +55,30 @@
     --border-color: #ccc;
 }
 
+html[data-theme="dark"] {
+    --bg-color: #0b1719;
+    --text-main: #e8f2f3;
+    --text-secondary: #c5d0d2;
+    --btn-color: #6a8f90;
+    --card-bg: #152428;
+    --footer-bg: #041015;
+    --field-bg: #2a3d40;
+    --method-field-bg: #2a3d40;
+    --section-bg: #122022;
+    --border-color: #2a3f42;
+}
+
 /* ===== Reset Styles ===== */
 *,
 *::before,
 *::after {
     box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
 }
 
 body {
@@ -111,6 +130,107 @@ body {
     opacity: 0.7;
 }
 
+/* Кнопка «Настройки»: не наследует .nav a; отдельно + выше специфичность, чем reset'ы `button` с бэка */
+.header .nav .nav-dropdown__trigger {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: left;
+    color: var(--text-main);
+    font-family: var(--font-family);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.header .nav .nav-dropdown__trigger:hover {
+    opacity: 0.7;
+}
+
+.nav .nav-link {
+    text-decoration: none;
+    color: var(--text-main);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.nav .nav-link:hover {
+    opacity: 0.7;
+}
+
+.nav-dropdown {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.nav-dropdown__menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 220px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 200;
+    box-sizing: border-box;
+}
+
+.nav-dropdown__group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.nav-dropdown__group:last-child {
+    margin-bottom: 0;
+}
+
+.nav-dropdown__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.nav-dropdown__toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.nav-dropdown__pill {
+    padding: 6px 14px;
+    border-radius: 30px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-family);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.nav-dropdown__pill:hover {
+    filter: brightness(0.97);
+}
+
+.nav-dropdown__pill.is-active {
+    background: rgba(143, 178, 179, 0.55);
+    border-color: var(--toggle-active);
+    font-weight: 600;
+}
+
 .nav-logo {
     display: flex;
     align-items: center;
@@ -139,7 +259,8 @@ body {
         gap: 20px;
     }
 
-    .nav > a:not(.nav-logo) {
+    .nav > .nav-link,
+    .nav > .nav-dropdown {
         display: none;
     }
 }
@@ -148,7 +269,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     width: 100%;
     max-width: 1100px;
     margin: 0 auto;
@@ -428,15 +549,12 @@ body {
 /* ===== Generate Page: Form Fields ===== */
 .form-row {
     display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
     align-items: flex-start;
     gap: var(--form-gap-x);
     width: 100%;
-    max-width: 100%;
-    margin-top: var(--form-offset-top);
-    margin-bottom: 0;
-    min-width: 0;
+    max-width: calc(var(--field-w) * 2 + var(--form-gap-x));
+    margin: var(--form-offset-top) auto 0;
+    justify-content: space-between;
 }
 
 .field-wrap {
@@ -623,7 +741,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: flex-start;
+    justify-content: center;
 }
 
 .checkbox-item {
@@ -648,23 +766,22 @@ body {
 
 /* ===== Buttons ===== */
 .submit-btn {
-    width: min(961px, 100%);
-    max-width: 100%;
+    width: 100%;
+    max-width: 961px;
     height: 58px;
+    margin: 50px auto 0;
     background-color: #8fb2b3;
     border: none;
     border-radius: 30px;
     padding: 0 20px;
-    margin-top: 50px;
     font-family: var(--font-family);
     font-size: 24px;
     font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
+    cursor: pointer;
     position: relative;
 }
 
@@ -851,14 +968,14 @@ body {
     justify-content: center;
 }
 
-/* ===== Generate Preview Section ===== */
-.preview-section {
-    width: min(961px, 100%);
-    max-width: 100%;
-    margin-top: 40px;
-    padding: 24px;
-    background: #f4f4f4;
-    border-radius: 24px;
+/* ===== Generate Preview Section (как панель предпросмотра анонимизации) ===== */
+.preview-section--generate {
+    width: 100%;
+    max-width: 961px;
+    margin: 40px auto 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
     box-sizing: border-box;
 }
 
@@ -881,12 +998,54 @@ body {
     color: var(--text-main);
 }
 
-.preview-table-wrap {
-    display: none;
+.preview-table-wrap[hidden] {
+    display: none !important;
 }
 
-.preview-table-wrap[hidden=false] {
+.preview-table-wrap:not([hidden]) {
     display: block;
+}
+
+.preview-panel--generate {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.preview-panel__table-clip--generate {
+    overflow-x: auto;
+}
+
+.generate-download-wrap {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 26px;
+}
+
+.download-btn--generate {
+    width: 185px;
+    height: 42px;
+    max-width: none;
+    margin-top: 0;
+    padding: 0 12px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 30px;
+    background-color: rgba(52, 128, 85, 0.42);
+    color: var(--text-main);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.download-btn--generate:hover {
+    filter: brightness(1.05);
+}
+
+.download-btn--generate:focus-visible {
+    outline: 2px solid var(--text-main);
+    outline-offset: 2px;
 }
 
 .preview-table-scroll {
@@ -1423,4 +1582,36 @@ body {
     font-size: 48px;
     font-weight: 500;
     letter-spacing: 1px;
+}
+
+/* ===== FIX: центрирование секции предпросмотра на странице генерации ===== */
+#generate-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#generate-section .preview-section--generate {
+    width: 100%;
+    max-width: 961px;
+    margin: 40px auto 0;
+    box-sizing: border-box;
+    display: block;
+}
+
+#generate-section .preview-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#generate-section .generate-download-wrap {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 26px;
+}
+
+#generate-section .download-btn--generate {
+    margin-left: auto;
 }
