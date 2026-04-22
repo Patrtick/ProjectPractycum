@@ -7,20 +7,37 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
     <div class="container">
         <header class="header">
             <nav class="nav" aria-label="Основная навигация">
-                <a class="nav-logo" href="#" onclick="showSection('home'); return false;" aria-label="На главную">
+                <a class="nav-logo" href="#" onclick="showSection('home'); window.scrollTo(0,0); return false;" aria-label="На главную">
                     <img src="pictures/star_logo.svg" alt="" width="32" height="32" decoding="async">
                 </a>
-                <a href="#features" onclick="showSection('home'); return false;">Возможности</a>
-                <a href="#">Язык</a>
-                <a href="#">Тема</a>
-                <a href="#footer">ССЫЛКА_ФУТЕР</a>
+                <a class="nav-link" href="#" onclick="showSection('home'); window.scrollTo(0,0); return false;">Главная</a>
+                <a class="nav-link" href="#footer">Контакты</a>
+                <div class="nav-dropdown" data-nav-settings>
+                    <button type="button" class="nav-dropdown__trigger" id="nav-settings-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="nav-settings-menu">Настройки</button>
+                    <div class="nav-dropdown__menu" id="nav-settings-menu" role="menu" hidden>
+                        <div class="nav-dropdown__group" role="none">
+                            <span class="nav-dropdown__label" id="nav-label-lang">Язык</span>
+                            <div class="nav-dropdown__toggles" role="group" aria-labelledby="nav-label-lang">
+                                <button type="button" class="nav-dropdown__pill" role="menuitem" data-lang="ru">RU</button>
+                                <button type="button" class="nav-dropdown__pill" role="menuitem" data-lang="en">EN</button>
+                            </div>
+                        </div>
+                        <div class="nav-dropdown__group" role="none">
+                            <span class="nav-dropdown__label" id="nav-label-theme">Тема</span>
+                            <div class="nav-dropdown__toggles" role="group" aria-labelledby="nav-label-theme">
+                                <button type="button" class="nav-dropdown__pill" role="menuitem" data-theme-choice="light">Светлая</button>
+                                <button type="button" class="nav-dropdown__pill" role="menuitem" data-theme-choice="dark">Тёмная</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </nav>
         </header>
 
@@ -119,18 +136,22 @@
                     <span class="submit-btn__loader" aria-hidden="true"></span>
                 </button>
 
-                <section class="preview-section" id="preview-section" hidden>
+                <section class="preview-section preview-section--generate" id="preview-section" hidden>
                     <p class="preview-status" id="preview-status" role="status" aria-live="polite"></p>
                     <div class="preview-table-wrap" id="preview-table-wrap" hidden>
-                        <h2 class="preview-heading">Предпросмотр (первые 5 строк)</h2>
-                        <div class="preview-table-scroll">
-                            <table class="preview-table" id="preview-table">
-                                <thead id="preview-thead"></thead>
-                                <tbody id="preview-tbody"></tbody>
-                            </table>
+                        <section class="preview-panel preview-panel--generate" aria-label="Предпросмотр сгенерированных данных">
+                            <h3 class="preview-panel__title">Предпросмотр (первые 5 строк)</h3>
+                            <div class="preview-panel__table-clip preview-panel__table-clip--generate">
+                                <table class="preview-table preview-table--in-panel" id="preview-table">
+                                    <thead id="preview-thead"></thead>
+                                    <tbody id="preview-tbody"></tbody>
+                                </table>
+                            </div>
+                        </section>
+                        <div class="generate-download-wrap">
+                            <button type="button" class="download-btn download-btn--generate" id="download-btn" hidden>Скачать CSV</button>
                         </div>
                     </div>
-                    <button type="button" class="download-btn" id="download-btn" hidden>Скачать CSV</button>
                 </section>
             </section>
 
