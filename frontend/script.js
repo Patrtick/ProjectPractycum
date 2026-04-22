@@ -1,9 +1,111 @@
-/**
- * Combined script.js for:
- * - Home page (firstpage)
- * - Generate page (generate)
- * - Anonymize page (anonym)
- */
+(function () {
+    "use strict";
+
+    var STORAGE_THEME = "appTheme";
+    var STORAGE_LANG = "appLang";
+
+    function applyTheme(mode) {
+        var isDark = mode === "dark";
+        if (isDark) {
+            document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+        }
+        try {
+            localStorage.setItem(STORAGE_THEME, isDark ? "dark" : "light");
+        } catch (e) { /* ignore */ }
+        document.querySelectorAll("[data-theme-choice]").forEach(function (btn) {
+            var t = btn.getAttribute("data-theme-choice");
+            btn.classList.toggle("is-active", isDark ? t === "dark" : t === "light");
+        });
+    }
+
+    function applyLang(code) {
+        var c = code === "en" ? "en" : "ru";
+        document.documentElement.lang = c === "en" ? "en" : "ru";
+        try {
+            localStorage.setItem(STORAGE_LANG, c);
+        } catch (e) { /* ignore */ }
+        document.querySelectorAll("[data-lang]").forEach(function (btn) {
+            var t = btn.getAttribute("data-lang");
+            btn.classList.toggle("is-active", t === c);
+        });
+    }
+
+    function closeNavMenu() {
+        var wrap = document.querySelector("[data-nav-settings]");
+        if (!wrap) return;
+        var menu = wrap.querySelector(".nav-dropdown__menu");
+        var trigger = wrap.querySelector(".nav-dropdown__trigger");
+        wrap.classList.remove("is-open");
+        if (menu) menu.hidden = true;
+        if (trigger) trigger.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleNavMenu(e) {
+        if (e) e.stopPropagation();
+        var wrap = document.querySelector("[data-nav-settings]");
+        if (!wrap) return;
+        var menu = wrap.querySelector(".nav-dropdown__menu");
+        var trigger = wrap.querySelector(".nav-dropdown__trigger");
+        var willOpen = !wrap.classList.contains("is-open");
+        if (willOpen) wrap.classList.add("is-open");
+        else wrap.classList.remove("is-open");
+        if (menu) menu.hidden = !willOpen;
+        if (trigger) trigger.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        try {
+            var sTheme = localStorage.getItem(STORAGE_THEME);
+            applyTheme(sTheme === "dark" ? "dark" : "light");
+        } catch (err) {
+            applyTheme("light");
+        }
+
+        try {
+            var sLang = localStorage.getItem(STORAGE_LANG);
+            applyLang(sLang === "en" ? "en" : "ru");
+        } catch (err2) {
+            applyLang("ru");
+        }
+
+        var wrap = document.querySelector("[data-nav-settings]");
+        if (!wrap) return;
+
+        var trigger = wrap.querySelector(".nav-dropdown__trigger");
+        var menu = wrap.querySelector(".nav-dropdown__menu");
+
+        if (trigger) {
+            trigger.addEventListener("click", toggleNavMenu);
+        }
+
+        if (menu) {
+            menu.addEventListener("click", function (ev) {
+                ev.stopPropagation();
+            });
+        }
+
+        wrap.querySelectorAll("[data-theme-choice]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                applyTheme(btn.getAttribute("data-theme-choice"));
+                closeNavMenu();
+            });
+        });
+
+        wrap.querySelectorAll("[data-lang]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                applyLang(btn.getAttribute("data-lang"));
+                closeNavMenu();
+            });
+        });
+
+        document.addEventListener("click", closeNavMenu);
+        document.addEventListener("keydown", function (ev) {
+            if (ev.key === "Escape") closeNavMenu();
+        });
+    });
+})();
 
 // ============================================================================
 // SECTION 1: Anonymize Page Functions
