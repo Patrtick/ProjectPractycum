@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
         <header class="header">
             <nav class="nav" aria-label="Основная навигация">
                 <a class="nav-logo" href="#" onclick="showSection('home'); window.scrollTo(0,0); return false;" aria-label="На главную">
-                    <img src="pictures/star_logo.svg" alt="" width="32" height="32" decoding="async">
+                    <img id="nav-logo-img" src="pictures/star_logo.svg" alt="" width="32" height="32" decoding="async">
                 </a>
                 <a class="nav-link" href="#" onclick="showSection('home'); window.scrollTo(0,0); return false;">Главная</a>
                 <a class="nav-link" href="#footer">Контакты</a>
@@ -149,7 +149,7 @@
                             </div>
                         </section>
                         <div class="generate-download-wrap">
-                            <button type="button" class="download-btn download-btn--generate" id="download-btn" hidden>Скачать CSV</button>
+                            <button type="button" class="download-btn--generate" id="download-btn" hidden>Скачать CSV</button>
                         </div>
                     </div>
                 </section>
@@ -173,16 +173,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <section class="preview-panel" id="preview-section-anonym" hidden>
-                        <h3 class="preview-panel__title">Предпросмотр (первые 4 строки):</h3>
-                        <div class="preview-panel__table-clip">
-                            <table class="preview-table" id="preview-table-anonym">
-                                <thead id="preview-thead-anonym"></thead>
-                                <tbody id="preview-tbody-anonym"></tbody>
-                            </table>
-                        </div>
-                    </section>
 
                     <section class="config-panel" id="anonym-config-section" hidden>
                         <div class="config-panel__header">
@@ -212,7 +202,20 @@
                             <span class="btn-main-action__loader"></span>
                         </button>
                         <div class="feedback-large" id="actions-feedback" role="status" aria-live="polite"></div>
-                        <button type="button" class="btn-download-final" id="btn-download-final">Скачать CSV</button>
+                    </div>
+
+                    <section class="preview-panel" id="preview-section-anonym" hidden>
+                        <h3 class="preview-panel__title">Предпросмотр анонимизированного файла (первые 5 строк):</h3>
+                        <div class="preview-panel__table-clip">
+                            <table class="preview-table" id="preview-table-anonym">
+                                <thead id="preview-thead-anonym"></thead>
+                                <tbody id="preview-tbody-anonym"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <div class="generate-download-wrap generate-download-wrap--anonym">
+                        <button type="button" class="download-btn--generate" id="btn-download-final" hidden>Скачать CSV</button>
                     </div>
                 </div>
             </section>
@@ -225,31 +228,36 @@
 
     <script>
         function showSection(sectionId) {
+            // Скройте все секции
             const sections = document.querySelectorAll('.page-section');
             sections.forEach(section => {
                 section.classList.remove('active');
             });
             
+            // Обновите активный статус табов
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => {
                 tab.setAttribute('aria-selected', 'false');
                 tab.classList.remove('active');
             });
             
+            // Покажите выбранную секцию
             const activeSection = document.getElementById(sectionId + '-section');
             if (activeSection) {
                 activeSection.classList.add('active');
             }
             
+            // Обновите активный таб
             const activeTabs = document.querySelectorAll(`a[onclick*="showSection('${sectionId}')"]`);
             activeTabs.forEach(tab => {
                 tab.setAttribute('aria-selected', 'true');
                 tab.classList.add('active');
             });
 
+            // Скролл вверх
             window.scrollTo(0, 0);
         }
     </script>
-    <script src="script.js"></script>
+    <script src="script.js?v=8"></script>
 </body>
 </html>
