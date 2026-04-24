@@ -1586,10 +1586,13 @@ body {
 
 /* ===== FIX: центрирование секции предпросмотра на странице генерации ===== */
 #generate-section {
+    width: 100%;
+}
+
+#generate-section.active {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
 }
 
 #generate-section .preview-section--generate {
