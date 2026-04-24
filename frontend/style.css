@@ -1753,3 +1753,162 @@ body {
 [data-theme="dark"] .question-mark:hover {
     background-color: #2a3942;
 }
+
+[data-theme="dark"] .custom-select__list,
+[data-theme="dark"] .config-table .custom-select--cell .custom-select__list {
+    background: #24323a;
+    border: 1px solid #3a4a50;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .nav {
+        height: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+        row-gap: 10px;
+    }
+
+    .nav a,
+    .header .nav .nav-dropdown__trigger,
+    .nav .nav-link {
+        font-size: 18px;
+    }
+
+    .tabs {
+        margin-top: 80px;
+    }
+
+    .tab {
+        font-size: 16px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 14px;
+        overflow: visible;
+        padding-bottom: 0;
+        margin-top: 56px;
+    }
+
+    .field-wrap {
+        width: 100%;
+        flex: 1 1 auto;
+        max-width: 100%;
+    }
+
+    .submit-btn,
+    .btn-main-action {
+        height: 52px;
+        font-size: 20px;
+    }
+
+    .upload-section {
+        margin-top: 56px;
+    }
+
+    .upload-row-scroll {
+        overflow: visible;
+    }
+
+    .upload-row {
+        width: 100%;
+        justify-content: flex-start;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .upload-label {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.3;
+        height: auto;
+    }
+
+    .btn-upload {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .upload-feedback {
+        width: 100%;
+    }
+
+    .preview-panel,
+    .config-panel {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .preview-panel__title,
+    .config-panel__title {
+        font-size: 18px;
+    }
+
+    .config-table th,
+    .config-table td,
+    .preview-table th,
+    .preview-table td,
+    .preview-table--in-panel th,
+    .preview-table--in-panel td {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .generate-download-wrap--anonym,
+    .generate-download-wrap {
+        margin-top: 16px;
+    }
+
+    .download-btn--generate {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        margin-top: 92px;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+        line-height: 1.15;
+    }
+
+    .hero p {
+        font-size: 15px;
+    }
+
+    .feature-btn {
+        height: 56px;
+        font-size: 28px;
+    }
+
+    .feature-card {
+        height: auto;
+        min-height: 420px;
+    }
+
+    .question-mark {
+        width: 44px;
+        height: 44px;
+        font-size: 26px;
+    }
+
+    .tabs {
+        height: 46px;
+        border-radius: 24px;
+    }
+
+    .tab {
+        font-size: 15px;
+        padding: 0 4px;
+    }
+}
