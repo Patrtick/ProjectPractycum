@@ -19,10 +19,10 @@
         var navLogo = document.getElementById("nav-logo-img");
         if (isDark) {
             document.documentElement.setAttribute("data-theme", "dark");
-            if (navLogo) navLogo.src = "pictures/logo_dark.svg";
+            if (navLogo) navLogo.src = "/pictures/logo_dark.svg";
         } else {
             document.documentElement.removeAttribute("data-theme");
-            if (navLogo) navLogo.src = "pictures/star_logo.svg";
+            if (navLogo) navLogo.src = "/pictures/star_logo.svg";
         }
         try {
             localStorage.setItem(STORAGE_THEME, isDark ? "dark" : "light");
@@ -126,7 +126,9 @@
 (function () {
     "use strict";
 
-    var API_BASE = "http://localhost:8000";
+    var API_BASE = window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "http://2.26.8.117:8000";
     var API_ANALYZE = "/api/analyze";
     var API_ANONYM = "/api/anonymize";
     var API_METHODS = "/api/anonymize/methods";
@@ -327,7 +329,7 @@
         toggle.className = "custom-select__toggle";
         var bird = document.createElement("img");
         bird.className = "custom-select__bird";
-        bird.src = "pictures/bird.svg";
+        bird.src = "/pictures/bird.svg";
         bird.alt = "";
         bird.width = 17;
         bird.height = 15;
@@ -590,7 +592,9 @@
 (function () {
     "use strict";
 
-    var API_BASE = "http://localhost:8000";
+    var API_BASE = window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "http://2.26.8.117:8000";
     var GENERATE_PATH = "/api/generate";
 
     var TEMPLATE_ID_BY_FILE = {
