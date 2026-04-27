@@ -19,10 +19,10 @@
         var navLogo = document.getElementById("nav-logo-img");
         if (isDark) {
             document.documentElement.setAttribute("data-theme", "dark");
-            if (navLogo) navLogo.src = "pictures/logo_dark.svg";
+            if (navLogo) navLogo.src = "/pictures/logo_dark.svg";
         } else {
             document.documentElement.removeAttribute("data-theme");
-            if (navLogo) navLogo.src = "pictures/star_logo.svg";
+            if (navLogo) navLogo.src = "/pictures/star_logo.svg";
         }
         try {
             localStorage.setItem(STORAGE_THEME, isDark ? "dark" : "light");
@@ -329,7 +329,7 @@
         toggle.className = "custom-select__toggle";
         var bird = document.createElement("img");
         bird.className = "custom-select__bird";
-        bird.src = "pictures/bird.svg";
+        bird.src = "/pictures/bird.svg";
         bird.alt = "";
         bird.width = 17;
         bird.height = 15;
