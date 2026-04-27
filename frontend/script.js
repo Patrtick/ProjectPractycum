@@ -592,7 +592,7 @@
 (function () {
     "use strict";
 
-    var API_BASE = "http://2.26.8.117:8000";
+    var API_BASE = "";
     var GENERATE_PATH = "/api/generate";
 
     var TEMPLATE_ID_BY_FILE = {
