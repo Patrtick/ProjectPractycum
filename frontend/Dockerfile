@@ -1,10 +1,9 @@
 FROM nginx:alpine
 
-# Копируем все файлы фронтенда в нужную директорию nginx
 COPY . /usr/share/nginx/html/
 
-# Открываем порт
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 
-# nginx запускается по умолчанию
 CMD ["nginx", "-g", "daemon off;"]
