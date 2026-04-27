@@ -128,7 +128,7 @@
 
     var API_BASE = window.location.hostname === "localhost"
     ? "http://localhost:8000"
-    : "http://2.26.8.117:8080";
+    : "http://2.26.8.117:8000";
     var API_ANALYZE = "/api/analyze";
     var API_ANONYM = "/api/anonymize";
     var API_METHODS = "/api/anonymize/methods";
@@ -592,7 +592,7 @@
 (function () {
     "use strict";
 
-    var API_BASE = "http://2.26.8.117:8080";
+    var API_BASE = "http://2.26.8.117:8000";
     var GENERATE_PATH = "/api/generate";
 
     var TEMPLATE_ID_BY_FILE = {
