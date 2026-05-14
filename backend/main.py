@@ -6,14 +6,14 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Dict, Any
 
 # Добавляем текущую директорию в пути поиска, чтобы импорты работали наверняка
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
-    from generator import generate_custom_csv_file
-    from anonymizer import anonymize_csv
+    from generator import generate_custom_csv_file, FIELDS_MAP
+    from anonymizer import anonymize_csv, METHODS
 except ImportError as e:
     print(f"CRITICAL ERROR: Could not import modules. {e}")
     # Выводим список файлов для отладки в логах docker
@@ -45,6 +45,10 @@ class GenerateRequest(BaseModel):
     template_id: str
     rows: int = Field(..., ge=1, le=10000)
     columns: List[str]
+
+class AnonymizeDataRequest(BaseModel):
+    data: List[Dict[str, Any]]
+    rules: Dict[str, str]
 
 @app.get("/")
 def root():
@@ -151,5 +155,43 @@ async def api_generate(request: GenerateRequest):
         return FileResponse(output_path, media_type="text/csv", filename=filename)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# --- API v1  ---
+
+@app.post("/api/v1/generate")
+async def v1_generate(request: GenerateRequest):
+    try:
+        if request.template_id not in FIELDS_MAP:
+            raise HTTPException(status_code=400, detail=f"Unknown template: {request.template_id}")
+        
+        template_fields = FIELDS_MAP[request.template_id]
+        valid_columns = [col for col in request.columns if col in template_fields]
+        if not valid_columns:
+            valid_columns = list(template_fields.keys())
+
+        data = []
+        for i in range(request.rows):
+            row = {col: template_fields[col](i) for col in valid_columns}
+            data.append(row)
+        
+        return {"data": data, "count": len(data)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/anonymize")
+async def v1_anonymize(request: AnonymizeDataRequest):
+    try:
+        anonymized_data = []
+        for row in request.data:
+            new_row = row.copy()
+            for col, method in request.rules.items():
+                if col in new_row and new_row[col] is not None:
+                    if method in METHODS:
+                        new_row[col] = METHODS[method](str(new_row[col]))
+            anonymized_data.append(new_row)
+        
+        return {"data": anonymized_data, "count": len(anonymized_data)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

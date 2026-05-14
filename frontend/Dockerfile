@@ -3,5 +3,5 @@ FROM nginx:alpine
 COPY . /usr/share/nginx/html/ 
 # Открываем порт 
 EXPOSE 80 
-# nginx запускается по умолчанию CMD 
-["nginx", "-g", "daemon off;"]
+# nginx запускается по умолчанию
+CMD ["nginx", "-g", "daemon off;"]
