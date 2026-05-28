@@ -48,7 +48,7 @@ class GenerateRequest(BaseModel):
 
 class AnonymizeDataRequest(BaseModel):
     data: List[Dict[str, Any]]
-    rules: Dict[str, str]
+    rules: Dict[str, Any]
 
 @app.get("/")
 def root():
@@ -58,9 +58,20 @@ def root():
 async def get_methods():
     return {
         "methods": [
-            {"id": "mask", "label": "Маскирование", "description": "Заменяет часть данных на *", "example": "i***@mail.ru", "parameters": []},
+            {
+                "id": "mask", 
+                "label": "Маскирование", 
+                "description": "Заменяет часть данных на *", 
+                "example": "i***@mail.ru", 
+                "parameters": [
+                    {"name": "start", "label": "Начать с (индекс)", "type": "number", "default": 0},
+                    {"name": "length", "label": "Количество символов", "type": "number", "default": 5}
+                ]
+            },
             {"id": "redact", "label": "Удаление", "description": "Полностью удаляет значение", "example": "", "parameters": []},
-            {"id": "hash", "label": "Хеширование", "description": "Преобразует в хеш", "example": "a1b2c3d4", "parameters": []},
+            {"id": "hash", "label": "Хеширование (MD5)", "description": "Преобразует в короткий MD5 хеш (8 симв.)", "example": "a1b2c3d4", "parameters": []},
+            {"id": "sha256", "label": "Хеширование (SHA-256)", "description": "Полный SHA-256 хеш", "example": "5e884898...", "parameters": []},
+            {"id": "sha1", "label": "Хеширование (SHA-1)", "description": "Полный SHA-1 хеш", "example": "7c4a8d09...", "parameters": []},
             {"id": "none", "label": "Без изменений", "description": "Оставляет как есть", "example": "Москва", "parameters": []}
         ]
     }
@@ -186,10 +197,19 @@ async def v1_anonymize(request: AnonymizeDataRequest):
         anonymized_data = []
         for row in request.data:
             new_row = row.copy()
-            for col, method in request.rules.items():
+            for col, rule in request.rules.items():
                 if col in new_row and new_row[col] is not None:
+                    method = rule
+                    params = {}
+                    if isinstance(rule, dict):
+                        method = rule.get("method", "none")
+                        params = {k: v for k, v in rule.items() if k != "method"}
+                    
                     if method in METHODS:
-                        new_row[col] = METHODS[method](str(new_row[col]))
+                        if method == "mask":
+                            new_row[col] = METHODS[method](str(new_row[col]), **params)
+                        else:
+                            new_row[col] = METHODS[method](str(new_row[col]))
             anonymized_data.append(new_row)
         
         return {"data": anonymized_data, "count": len(anonymized_data)}
