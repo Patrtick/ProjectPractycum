@@ -11,14 +11,14 @@ jobs:
 
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.0.3
 
         with:
-          host: 10.40.241.63
-          username: root
-          password: ${{ secrets.SERVER_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             cd /root/ProjectPractycum
             git pull
-            docker-compose down
-            docker-compose up -d --build
+            docker compose down
+            docker compose up -d --build
