@@ -3,7 +3,7 @@
    (merged: script.js + generation.js + anonymization.js)
    ============================================ */
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'http://2.26.8.117:8000';
 
 /* ============================================
    script.js — shared utilities
@@ -156,7 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Smooth scroll for nav links ───────────────
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
-      const target = document.querySelector(link.getAttribute('href'));
+      const href = link.getAttribute('href');
+      if (!href || href === '#') return;
+      const target = document.querySelector(href);
       if (target) {
         e.preventDefault();
         target.scrollIntoView({ behavior: 'smooth' });
@@ -418,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (statusEl) statusEl.textContent = 'Генерация данных...';
 
       try {
-        const resp = await fetch(`${API_BASE}/api/v1/generate`, {
+        const resp = await fetch(`${API_BASE}/api/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ template_id: selectedTemplate, rows, columns }),

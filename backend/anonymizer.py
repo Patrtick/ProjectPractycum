@@ -43,12 +43,49 @@ def none_method(value: str):
     return value
 
 
+def _to_int(value, default: int) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def mask_by_range(value: str, start: int = 0, length: int = 5) -> str:
+    if value is None:
+        return value
+
+    value = str(value)
+    start = max(0, _to_int(start, 0))
+    length = max(0, _to_int(length, 5))
+
+    if length == 0 or start >= len(value):
+        return value
+
+    end = min(len(value), start + length)
+    return value[:start] + ("*" * (end - start)) + value[end:]
+
+
 METHODS = {
     "mask": mask,
     "redact": redact,
     "hash": pseudo_hash,
     "none": none_method
 }
+
+
+def apply_rule(value: str, rule):
+    method = rule
+    if isinstance(rule, dict):
+        method = rule.get("method", "none")
+        if method == "mask":
+            if "start" in rule or "length" in rule:
+                start = rule.get("start", 0)
+                length = rule.get("length", 5)
+                return mask_by_range(value, start, length)
+
+    if method in METHODS:
+        return METHODS[method](str(value))
+    return value
 
 
 def anonymize_csv(input_path, output_path, rules: dict):
@@ -77,11 +114,6 @@ def anonymize_csv(input_path, output_path, rules: dict):
             for row in reader:
                 for col, rule in rules.items():
                     if col in row and row[col] is not None:
-                        method = rule
-                        if isinstance(rule, dict):
-                            method = rule.get("method", "none")
-                        
-                        if method in METHODS:
-                            row[col] = METHODS[method](str(row[col]))
+                        row[col] = apply_rule(row[col], rule)
 
                 writer.writerow(row)
