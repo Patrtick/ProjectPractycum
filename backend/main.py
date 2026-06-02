@@ -98,7 +98,26 @@ async def get_methods():
                 ]
             },
             {"id": "redact", "label": "Удаление", "description": "Полностью удаляет значение", "example": "", "parameters": []},
-            {"id": "hash", "label": "Хеширование", "description": "Преобразует в хеш", "example": "a1b2c3d4", "parameters": []},
+            {
+                "id": "hash",
+                "label": "Хеширование",
+                "description": "Преобразует в хеш",
+                "example": "a1b2c3d4",
+                "parameters": [
+                    {
+                        "name": "algorithm",
+                        "label": "Алгоритм",
+                        "type": "select",
+                        "default": "md5",
+                        "options": [
+                            {"value": "md5", "label": "MD5"},
+                            {"value": "sha1", "label": "SHA-1"},
+                            {"value": "sha256", "label": "SHA-256"},
+                            {"value": "sha512", "label": "SHA-512"}
+                        ]
+                    }
+                ]
+            },
             {"id": "none", "label": "Без изменений", "description": "Оставляет как есть", "example": "Москва", "parameters": []}
         ]
     }

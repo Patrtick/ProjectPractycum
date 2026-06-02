@@ -33,10 +33,16 @@ def redact(value: str):
     return ""
 
 
-def pseudo_hash(value: str):
+def pseudo_hash(value: str, algorithm: str = "md5"):
     if not value:
         return value
-    return hashlib.md5(str(value).encode()).hexdigest()[:8]
+
+    algo = str(algorithm or "md5").lower()
+    if algo not in hashlib.algorithms_available:
+        algo = "md5"
+
+    digest = hashlib.new(algo, str(value).encode()).hexdigest()
+    return digest[:8]
 
 
 def none_method(value: str):
@@ -82,6 +88,9 @@ def apply_rule(value: str, rule):
                 start = rule.get("start", 0)
                 length = rule.get("length", 5)
                 return mask_by_range(value, start, length)
+        if method == "hash":
+            algorithm = rule.get("algorithm", "md5")
+            return pseudo_hash(str(value), algorithm)
 
     if method in METHODS:
         return METHODS[method](str(value))

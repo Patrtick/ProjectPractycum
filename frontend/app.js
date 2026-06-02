@@ -571,9 +571,20 @@ document.addEventListener('DOMContentLoaded', () => {
             { name: 'length', label: 'Количество символов',  type: 'number', default: 5 },
           ]},
           { id: 'redact', label: 'Удаление',       parameters: [] },
-          { id: 'hash',   label: 'Хеш (MD5)',      parameters: [] },
-          { id: 'sha256', label: 'Хеш (SHA-256)',  parameters: [] },
-          { id: 'sha1',   label: 'Хеш (SHA-1)',    parameters: [] },
+          { id: 'hash',   label: 'Хеширование',    parameters: [
+            {
+              name: 'algorithm',
+              label: 'Алгоритм',
+              type: 'select',
+              default: 'md5',
+              options: [
+                { value: 'md5', label: 'MD5' },
+                { value: 'sha1', label: 'SHA-1' },
+                { value: 'sha256', label: 'SHA-256' },
+                { value: 'sha512', label: 'SHA-512' },
+              ],
+            },
+          ] },
         ];
       }
     }
@@ -707,6 +718,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── Render columns table ───────────────────────
+    function renderMethodParams(method) {
+      if (!method?.parameters || method.parameters.length === 0) return '';
+
+      const parts = method.parameters.map(param => {
+        const value = param.default ?? '';
+        if (param.type === 'select') {
+          const options = (param.options || []).map(opt => {
+            const selected = String(opt.value) === String(value) ? ' selected' : '';
+            return `<option value="${opt.value}"${selected}>${opt.label}</option>`;
+          }).join('');
+          return `<label class="anon-mask-label">${param.label} <select class="anon-mask-input anon-param-input" data-param-name="${param.name}">${options}</select></label>`;
+        }
+
+        const minAttr = param.min != null ? ` min="${param.min}"` : '';
+        return `<label class="anon-mask-label">${param.label} <input type="number" class="anon-mask-input anon-param-input" data-param-name="${param.name}"${minAttr} value="${value}" /></label>`;
+      });
+
+      return `<div class="anon-mask-params" style="display:none;">${parts.join('')}</div>`;
+    }
+
     function renderColumnsTable() {
       const container = document.getElementById('anon-cols-table');
       if (!container || !analyzedData) return;
@@ -733,10 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <select class="anon-method-select" data-col="${col.name}">
                 ${methodOptions}
               </select>
-              <div class="anon-mask-params" style="display:none;">
-                <label class="anon-mask-label">с позиции <input type="number" class="anon-mask-input anon-mask-start" min="0" value="0" /></label>
-                <label class="anon-mask-label">кол-во символов <input type="number" class="anon-mask-input anon-mask-length" min="1" value="5" /></label>
-              </div>
+              <div class="anon-method-params"></div>
             </div>
           </div>
         `;
@@ -748,26 +776,16 @@ document.addEventListener('DOMContentLoaded', () => {
         sel.addEventListener('change', () => {
           const row = sel.closest('.anon-col-row');
           row?.classList.toggle('has-method', sel.value !== 'none');
-          const maskParams = row?.querySelector('.anon-mask-params');
-          if (maskParams) {
+          const paramsWrap = row?.querySelector('.anon-method-params');
+          if (paramsWrap) {
             const selectedMethod = availableMethods.find(m => m.id === sel.value);
-            const hasParams = selectedMethod?.parameters && selectedMethod.parameters.length > 0;
-            maskParams.style.display = hasParams ? 'flex' : 'none';
-            // Apply defaults from API response
-            if (hasParams) {
-              selectedMethod.parameters.forEach(param => {
-                if (param.name === 'start') {
-                  const input = maskParams.querySelector('.anon-mask-start');
-                  if (input && input.value === '0') input.value = param.default ?? 0;
-                }
-                if (param.name === 'length') {
-                  const input = maskParams.querySelector('.anon-mask-length');
-                  if (input && input.value === '5') input.value = param.default ?? 5;
-                }
-              });
-            }
+            paramsWrap.innerHTML = renderMethodParams(selectedMethod);
+            const paramsBlock = paramsWrap.querySelector('.anon-mask-params');
+            if (paramsBlock) paramsBlock.style.display = 'flex';
           }
         });
+
+        sel.dispatchEvent(new Event('change'));
       });
     }
 
@@ -781,11 +799,17 @@ document.addEventListener('DOMContentLoaded', () => {
           const hasParams = selectedMethod?.parameters && selectedMethod.parameters.length > 0;
           if (hasParams) {
             const row = sel.closest('.anon-col-row');
-            const startEl  = row?.querySelector('.anon-mask-start');
-            const lengthEl = row?.querySelector('.anon-mask-length');
-            const start  = startEl  ? parseInt(startEl.value,  10) : 0;
-            const length = lengthEl ? parseInt(lengthEl.value, 10) : 5;
-            rules[col] = { method, start, length };
+            const rule = { method };
+            selectedMethod.parameters.forEach(param => {
+              const input = row?.querySelector(`[data-param-name="${param.name}"]`);
+              if (param.type === 'number') {
+                const parsed = parseInt(input?.value ?? '', 10);
+                rule[param.name] = Number.isNaN(parsed) ? (param.default ?? 0) : parsed;
+              } else {
+                rule[param.name] = input?.value ?? (param.default ?? '');
+              }
+            });
+            rules[col] = rule;
           } else {
             rules[col] = method;
           }
