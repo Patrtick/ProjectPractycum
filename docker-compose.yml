@@ -16,7 +16,7 @@ services:
     build: ./frontend
     container_name: app-frontend
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - backend
     networks:
